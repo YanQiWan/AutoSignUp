@@ -163,7 +163,6 @@ lint/tmp/
 *.hprof
 
 .idea/
-AutoSignUp/
 AutoSignUp1.2.zip
 MainInterface.spec
 OriginalCode/
