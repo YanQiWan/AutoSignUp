@@ -22,9 +22,11 @@ if __name__ == "__main__":
         if 6 <= current_hour <= 12 and 30 <= current_min <= 59:
             while not daka_succes:
                 daka_succes = auto_sign()
-                time.sleep(1700)
+                time.sleep(1400)
 
         if 20 <= current_hour <= 24 and 0 <= current_min < 59:
             while daka_succes:
                 daka_succes = not auto_sign()
-                time.sleep(1700)
+                time.sleep(1400)
+
+        time.sleep(300)
