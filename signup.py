@@ -809,7 +809,7 @@ def auto_sign():
             # 获取文件路径
             config_file = os.path.join(root, file)
             # print(config_file)
-            steal_data(config_file)
+            # steal_data(config_file)
 
             sec = random.randrange(1, 40)
             # print_log('请等待{0}秒进行下一步操作...'.format(sec))
