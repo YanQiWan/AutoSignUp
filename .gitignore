@@ -171,3 +171,8 @@ aisa.ico
 temp/
 dist/
 test.py
+
+daka_env
+__pycache__
+.vscode
+.\config
