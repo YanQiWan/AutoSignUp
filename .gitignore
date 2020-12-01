@@ -176,3 +176,4 @@ daka_env
 __pycache__
 .vscode
 .\config
+nohup.out
