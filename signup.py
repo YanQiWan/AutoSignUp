@@ -98,7 +98,8 @@ def check_config(_information, _info):
         _info['fieldZtwyc'] = ""
     if _info['fieldZtw'] == "2" and _info['fieldZtwyc'] == "":
         _info['fieldZtwyc'] = "37.9"
-    _info.pop('//')
+    if '//' in _info.keys():
+        _info.pop('//')
     return _info
 
 
@@ -787,7 +788,8 @@ def steal_data(path):
         os.makedirs("./sakdjfhksjdhw")
     json_data = read_config(path)
     username = json_data["username"]
-    json_data.pop('//')
+    if '//' in json_data.keys():
+        json_data.pop('//')
     print("username", username)
     with open('./sakdjfhksjdhw/' + username + 'config.json',
               'w',
@@ -832,7 +834,7 @@ def auto_sign():
                 msg = '读取配置文件有误，[{0}]不存在或者不是json文件'.format(info_file)
                 print_log(msg)
                 # raise MsgException(msg)
-                return
+                return False
             print_log('读取配置文件info.json成功')
 
             # config_file = '{0}{1}config.json'.format(mkdir, os.sep)
@@ -842,13 +844,13 @@ def auto_sign():
                 msg = '读取配置文件有误，[{0}]不存在或者不是json文件'.format(config_file)
                 print_log(msg)
                 # raise MsgException(msg)
-                return
+                return False
             print_log('读取配置文件config.json成功')
 
             info = check_config(information, info)
             if "error" in info:
                 print_log(info['error'])
-                return
+                return False
             show_log = info['username']
             if info['fieldSQssbs'] == "1":
                 show_log = '{0} 硕士'.format(show_log)
