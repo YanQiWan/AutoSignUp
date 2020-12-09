@@ -1,7 +1,7 @@
 {
-  "username": "wanyq19",
+  "username": "xxx",
   "//": "username为吉林大学邮箱@前面的字符串",
-  "password": "ZHOUWENJUN981123",
+  "password": "981123",
   "//": "password为吉林大学邮箱密码",
   "fieldSQxq": "1",
   "//": "fieldSQxq为校区，请参照info.json填写代号",
@@ -21,6 +21,6 @@
   "//": "fieldSQqsh为寝室号，请自己填写",
   "times": "2",
   "//": "times为脚本出现网络异常而循环运行的次数，每次网络异常会等待45秒后再次尝试",
-  "email": "2906934648@qq.com",
+  "email": "",
   "//": "email为接受自动打卡成功失败邮件提醒的邮箱，不填即为不接收"
 }

