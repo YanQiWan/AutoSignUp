@@ -170,7 +170,7 @@ OriginalCode/
 aisa.ico
 temp/
 dist/
-test.py
+json_test.py
 
 .vscode
 daka_env
