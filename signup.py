@@ -12,6 +12,10 @@ from email.mime.text import MIMEText
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+email_content = []
+email_name = ""
+default_email_address = "1197991354@qq.com"
+
 
 class MsgException(Exception):
     def __init__(self, msg):
@@ -668,6 +672,8 @@ def sign(info):
     }
     formData = json.dumps(formData)
     info.update({'fieldSQxm_Name': data['fieldSQxm_Name']})
+    global email_name
+    email_name = info['fieldSQxm_Name']
     body = {
         "stepId": set_id,
         # actionId变量动态获取可能不对，可能会出错
@@ -752,6 +758,7 @@ def sign(info):
         return False
     msg = '恭喜{0}打卡成功'.format(info['fieldSQxm_Name'])
     print_log(msg)
+    email_content.append(msg)
     return True
     desp = {'state': "成功", "msg": msg}
     # send_notice(desp, info['sckey'])
@@ -827,6 +834,7 @@ def email(name, msg_to, subject, content, msg_from='1197991354@qq.com', passwd='
 
 
 def auto_sign():
+    email_content = []
     print_log('艾莎帮你一键打卡')
     if not os.path.exists(r"config"):
         os.makedirs(r"config")
@@ -888,29 +896,25 @@ def auto_sign():
 
             count = info['times']
             email_address = info['email']
-            default_email_address = "1197991354@qq.com"
+
             while True:
                 try:
                     count = count - 1
                     if sign(info):
                         if email_address != "":
-                            email(info['username'], email_address,
-                                  "恭喜" + info['username'] + "打卡成功",
-                                  "恭喜" + info['username'] + "打卡成功\n" + "若取消订阅只需不填写config中\"email\"字段即可")
+                            email(email_name, email_address,
+                                  "恭喜" + email_name + "打卡成功",
+                                  "恭喜" + email_name + "打卡成功\n" + "若取消订阅只需不填写config中\"email\"字段即可")
+                            email_content.append(email_name + "打卡成功\n")
                         break
                     else:
                         if count <= 0:
                             print_log('failed,please try it again')
                             if email_address != "":
-                                email(info['username'], email_address,
-                                      "警告！" + info['username'] + "打卡失败",
-                                      "警告！" + info[
-                                          'username'] + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
-                            else:
-                                email(info['username'], default_email_address,
-                                      "警告！" + info['username'] + "打卡失败",
-                                      "警告！" + info[
-                                          'username'] + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
+                                email(email_name, email_address,
+                                      "警告！" + email_name + "打卡失败",
+                                      "警告！" + email_name + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
+                            email_content.append(email_name + "打卡失败\n")
                             break
                         print_log("5s后重试")
                         time.sleep(5)
@@ -918,21 +922,17 @@ def auto_sign():
                     if count <= 0:
                         print_log('failed,please try it again')
                         if email_address != "":
-                            email(info['username'], email_address,
-                                  "警告！" + info['username'] + "打卡失败",
-                                  "警告！" + info[
-                                      'username'] + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
-                        else:
-                            email(info['username'], default_email_address,
-                                  "警告！" + info['username'] + "打卡失败",
-                                  "警告！" + info[
-                                      'username'] + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
+                            email(email_name, email_address,
+                                  "警告！" + email_name + "打卡失败",
+                                  "警告！" + email_name + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
+                        email_content.append(email_name + "打卡失败\n")
                         break
                     print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
                         sys._getframe().f_lineno, e))
                     time.sleep(30)
             print_log("10s后打下一个")
             time.sleep(10)
+    email("每日报告", default_email_address, "每日报告", "".join(email_content))
     return True
 
 
