@@ -617,7 +617,7 @@ def sign(info):
             info['fieldSQxq'],  # 校区代号
         "fieldSQxq_Name":
             info['fieldSQxq_Name'],  # 校区名字
-        "fieldSQsjh": data['fieldSQsjh'],
+        # "fieldSQsjh": data['fieldSQsjh'],
         "fieldSQyjsms": data['fieldSQyjsms'],
         "fieldSQyjsms_Name": data['fieldSQyjsms_Name'],
         "fieldBKSpd": data['fieldBKSpd'],
