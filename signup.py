@@ -496,20 +496,16 @@ def sign(info):
     # count = 0
     boundFields = ''
     for key in fields:
-        # print(key)
         if key not in ['fieldSQbj','fieldWantw','fieldZhongtw','fieldWantwyc','fieldZhongtwyc']:
             boundFields = '{0}{1},'.format(boundFields, key)
-        else:
-            print("key", key)
         # count = count + 1
     # print(count)
     boundFields = boundFields.rstrip(',')
-    print("boundFields", boundFields)
     # print(info['fieldSQxq'])
     for key in info:
         if key in data and data[key] != "":
             info[key] = data[key]
-    print("data", data)
+    # print("data", data)
     formData = {
         "_VAR_EXECUTE_INDEP_ORGANIZE_Name":
             data['_VAR_EXECUTE_INDEP_ORGANIZE_Name'],
@@ -709,7 +705,7 @@ def sign(info):
     }
     url = 'https://ehall.jlu.edu.cn/infoplus/interface/listNextStepsUsers'
     print_log('正在请求/infoplus/interface/listNextStepsUsers文件...')
-    print("body14", body)
+    # print("body14", body)
     while True:
         try:
             count = count - 1
@@ -751,7 +747,7 @@ def sign(info):
 
     url = 'https://ehall.jlu.edu.cn/infoplus/interface/doAction'
     print_log('正在请求/infoplus/interface/doAction文件...')
-    print("body15", body)
+    # print("body15", body)
     while True:
         try:
             count = count - 1
@@ -775,7 +771,7 @@ def sign(info):
         msg = '/infoplus/interface/doAction文件数据格式出错'
         print_log(msg)
         raise MsgException(msg)
-    print("response", response.text)
+    # print("response", response.text)
     response_json = json.loads(response.text)
     if 'errno' in response_json and response_json['errno'] != 0:
         print_log(response_json['errno'])
