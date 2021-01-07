@@ -497,17 +497,19 @@ def sign(info):
     boundFields = ''
     for key in fields:
         # print(key)
-        if key != 'fieldSQbj':
+        if key not in ['fieldSQbj','fieldWantw','fieldZhongtw','fieldWantwyc','fieldZhongtwyc']:
             boundFields = '{0}{1},'.format(boundFields, key)
+        else:
+            print("key", key)
         # count = count + 1
     # print(count)
     boundFields = boundFields.rstrip(',')
-    # print(boundFields)
+    print("boundFields", boundFields)
     # print(info['fieldSQxq'])
-    # return False
     for key in info:
         if key in data and data[key] != "":
             info[key] = data[key]
+    print("data", data)
     formData = {
         "_VAR_EXECUTE_INDEP_ORGANIZE_Name":
             data['_VAR_EXECUTE_INDEP_ORGANIZE_Name'],
@@ -615,6 +617,15 @@ def sign(info):
             info['fieldSQxq'],  # 校区代号
         "fieldSQxq_Name":
             info['fieldSQxq_Name'],  # 校区名字
+        "fieldSQsjh": data['fieldSQsjh'],
+        "fieldSQyjsms": data['fieldSQyjsms'],
+        "fieldSQyjsms_Name": data['fieldSQyjsms_Name'],
+        "fieldBKSpd": data['fieldBKSpd'],
+        "fieldXNSY": data['fieldXNSY'],
+        "fieldXNSY_Name": data['fieldXNSY_Name'],
+        "fieldXWSY": "",
+        "fieldXWSY_Name": "",
+        "fieldSYQT": data['fieldSYQT'],
         "fieldSQgyl":
             info['fieldSQgyl'],  # 公寓楼代号
         "fieldSQgyl_Name":
@@ -624,6 +635,7 @@ def sign(info):
         },  # #############
         "fieldSQqsh":
             info['fieldSQqsh'],  # 寝室号
+        "fieldDZMC": data['fieldDZMC'],
         "fieldHidden":
             "",  # 校外居住 校内居住不管
         "fieldSheng":
@@ -647,20 +659,30 @@ def sign(info):
         },
         "fieldQums":
             "",  # 详细居住地
+        "fieldSFJTZGFXDQ": data["fieldSFJTZGFXDQ"],
+        "fieldSFJTZGFXDQsheng": data["fieldSFJTZGFXDQsheng"],
+        "fieldSFJTZGFXDQsheng_Name": data["fieldSFJTZGFXDQsheng_Name"],
+        "fieldSFJTZGFXDQshi": data['fieldSFJTZGFXDQshi'],
+        "fieldSFJTZGFXDQshi_Name": data['fieldSFJTZGFXDQshi_Name'],
+        "fieldSFJTZGFXDQshi_Attr": '',
+        "fieldSFJTZGFXDQqu": data['fieldSFJTZGFXDQqu'],
+        "fieldSFJTZGFXDQqu_Name": data['fieldSFJTZGFXDQqu_Name'],
+        "fieldSFJTZGFXDQqu_Attr": '',
+        "fieldSFJTZGFXDQxx": data['fieldSFJTZGFXDQxx'],
         "fieldSQssbs":
             info['fieldSQssbs'],  # 硕士博士 1硕士 2博士
         "fieldZtw":
             info['fieldZtw'],  # 体温 1正常 2异常
         "fieldZtwyc":
             info['fieldZtwyc'],  # 体温异常
-        "fieldZhongtw":
-            data['fieldZhongtw'],  # 中午体温
-        "fieldZhongtwyc":
-            data['fieldZhongtwyc'],  # 中午体温异常
-        "fieldWantw":
-            data['fieldWantw'],  # 晚上体温
-        "fieldWantwyc":
-            data['fieldWantwyc'],  # 晚上体温异常
+        # "fieldZhongtw":
+        #     data['fieldZhongtw'],  # 中午体温
+        # "fieldZhongtwyc":
+        #     data['fieldZhongtwyc'],  # 中午体温异常
+        # "fieldWantw":
+        #     data['fieldWantw'],  # 晚上体温
+        # "fieldWantwyc":
+        #     data['fieldWantwyc'],  # 晚上体温异常
         "fieldHide":
             data['fieldHide'],
         "fieldXY3":
@@ -687,6 +709,7 @@ def sign(info):
     }
     url = 'https://ehall.jlu.edu.cn/infoplus/interface/listNextStepsUsers'
     print_log('正在请求/infoplus/interface/listNextStepsUsers文件...')
+    print("body14", body)
     while True:
         try:
             count = count - 1
@@ -696,6 +719,7 @@ def sign(info):
                                      headers=headers,
                                      data=body, verify=False)
             print_log(url + ' succeed')
+            print_log(formData + "formData")
             break
         except Exception as e:
             if count <= 0:
@@ -727,6 +751,7 @@ def sign(info):
 
     url = 'https://ehall.jlu.edu.cn/infoplus/interface/doAction'
     print_log('正在请求/infoplus/interface/doAction文件...')
+    print("body15", body)
     while True:
         try:
             count = count - 1
@@ -750,6 +775,7 @@ def sign(info):
         msg = '/infoplus/interface/doAction文件数据格式出错'
         print_log(msg)
         raise MsgException(msg)
+    print("response", response.text)
     response_json = json.loads(response.text)
     if 'errno' in response_json and response_json['errno'] != 0:
         print_log(response_json['errno'])
@@ -845,7 +871,6 @@ def auto_sign():
             # 获取文件路径
             config_file = os.path.join(root, file)
             # print(config_file)
-
 
             sec = random.randrange(1, 40)
             # print_log('请等待{0}秒进行下一步操作...'.format(sec))
