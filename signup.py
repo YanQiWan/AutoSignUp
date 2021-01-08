@@ -16,6 +16,17 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 email_content = []
 email_name = ""
 default_email_address = "1197991354@qq.com"
+keys = ["fieldXY2", "fieldWY", "fieldXY1", "fieldSQrq", "fieldSQxm", "fieldSQxm_Name", "fieldXH",
+        "fieldZY", "fieldSQnj", "fieldSQnj_Name", "fieldSQxy", "fieldSQxy_Name", "fieldSQxq",
+        "fieldSQxq_Name", "fieldSQsjh", "fieldSQyjsms", "fieldSQyjsms_Name", "fieldBKSpd",
+        "fieldXNSY", "fieldXNSY_Name", "fieldXWSY", "fieldXWSY_Name", "fieldSYQT", "fieldSQgyl", "fieldSQgyl_Name",
+        "fieldSQgyl_Attr", "fieldSQqsh", "fieldDZMC", "fieldHidden", "fieldSheng", "fieldSheng_Name", "fieldShi",
+        "fieldShi_Name", "fieldShi_Attr", "fieldQu", "fieldQu_Name", "fieldQu_Attr", "fieldQums", "fieldSFJTZGFXDQ",
+        "fieldSFJTZGFXDQsheng", "fieldSFJTZGFXDQsheng_Name", "fieldSFJTZGFXDQshi", "fieldSFJTZGFXDQshi_Name",
+        "fieldSFJTZGFXDQshi_Attr",
+        "fieldSFJTZGFXDQqu", "fieldSFJTZGFXDQqu_Name", "fieldSFJTZGFXDQqu_Attr", "fieldSFJTZGFXDQxx", "fieldSQssbs",
+        "fieldZtw",
+        "fieldZtwyc", "fieldHide", "fieldXY3"]
 
 
 class MsgException(Exception):
@@ -475,9 +486,11 @@ def sign(info):
     email_name = data['fieldSQxm_Name']
     print("email_name", email_name)
     boundFields = boundFields.rstrip(',')
-    for key in info:
-        if key in data and data[key] != "":
-            info[key] = data[key]
+
+    for item in keys:
+        if item not in data.keys():
+            data[item] = ""
+
     # print("data", data)
     formData = {
         "_VAR_EXECUTE_INDEP_ORGANIZE_Name":
@@ -592,8 +605,8 @@ def sign(info):
         "fieldBKSpd": data['fieldBKSpd'],
         "fieldXNSY": data['fieldXNSY'],
         "fieldXNSY_Name": data['fieldXNSY_Name'],
-        "fieldXWSY": "",
-        "fieldXWSY_Name": "",
+        "fieldXWSY": data["fieldXWSY"],
+        "fieldXWSY_Name": data["fieldXWSY_Name"],
         "fieldSYQT": data['fieldSYQT'],
         "fieldSQgyl":
             data['fieldSQgyl'],  # 公寓楼代号
@@ -602,32 +615,24 @@ def sign(info):
         "fieldSQgyl_Attr": {
             "_parent": data['fieldSQxq']
         },  # #############
-        "fieldSQqsh":
-            data['fieldSQqsh'],  # 寝室号
+        "fieldSQqsh": data['fieldSQqsh'],  # 寝室号
         "fieldDZMC": data['fieldDZMC'],
-        "fieldHidden":
-            "",  # 校外居住 校内居住不管
-        "fieldSheng":
-            "",  # 省代码
+        "fieldHidden": data["fieldHidden"],  # 校外居住 校内居住不管
+        "fieldSheng": data["fieldSheng"],  # 省代码
         "fieldSheng_Name":
-            "",  # 省名字
-        "fieldShi":
-            "",  # 市代码
-        "fieldShi_Name":
-            "",  # 市名字
+            data["fieldSheng_Name"],  # 省名字
+        "fieldShi": data["fieldShi"],  # 市代码
+        "fieldShi_Name": data["fieldShi_Name"],  # 市名字
         "fieldShi_Attr": {
             "_parent": ""
         },  # ##############
-        "fieldQu":
-            "",  # 区代码
-        "fieldQu_Name":
-            "",  # 区名字
+        "fieldQu": data["fieldQu"],  # 区代码
+        "fieldQu_Name": data["fieldQu_Name"],  # 区名字
         # "fieldQu_Attr": "{\"_parent\":\"\"}",  # ##############
         "fieldQu_Attr": {
             "_parent": ""
         },
-        "fieldQums":
-            "",  # 详细居住地
+        "fieldQums": data["fieldQums"],  # 详细居住地
         "fieldSFJTZGFXDQ": data["fieldSFJTZGFXDQ"],
         "fieldSFJTZGFXDQsheng": data["fieldSFJTZGFXDQsheng"],
         "fieldSFJTZGFXDQsheng_Name": data["fieldSFJTZGFXDQsheng_Name"],
@@ -677,6 +682,7 @@ def sign(info):
     }
     url = 'https://ehall.jlu.edu.cn/infoplus/interface/listNextStepsUsers'
     print_log('正在请求/infoplus/interface/listNextStepsUsers文件...')
+    # print("formData", formData)
     # print("body14", body)
     while True:
         try:
@@ -687,7 +693,6 @@ def sign(info):
                                      headers=headers,
                                      data=body, verify=False)
             print_log(url + ' succeed')
-            # print_log(formData + "formData")
             break
         except Exception as e:
             if count <= 0:
