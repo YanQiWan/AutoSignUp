@@ -26,7 +26,7 @@ def everyday_auto_signup():
                 daka_succes = auto_sign()
                 time.sleep(1200)
 
-        if 20 <= current_hour <= 24 and 1 <= current_min < 59:
+        if 21 <= current_hour <= 24 and 1 <= current_min < 59:
             while daka_succes:
                 daka_succes = not auto_sign()
                 time.sleep(1200)

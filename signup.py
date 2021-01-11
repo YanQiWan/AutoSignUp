@@ -113,6 +113,7 @@ def sign(info):
         "Connection": "keep-alive",
         "Upgrade-Insecure-Requests": "1"
     }
+    info['times'] = 4 if info['times'] > 4 else info['times']
     count = info['times']
     global email_name
     email_name = info['username']
@@ -487,8 +488,11 @@ def sign(info):
     actionId = actions[0]['id']
     # count = 0
     boundFields = ''
+    boundKeys = ['fieldWantw', 'fieldZhongtw', 'fieldWantwyc', 'fieldZhongtwyc']
+    if bks != "1":
+        boundKeys.append('fieldSQbj')
     for key in fields:
-        if key not in ['fieldSQbj', 'fieldWantw', 'fieldZhongtw', 'fieldWantwyc', 'fieldZhongtwyc']:
+        if key not in boundKeys:
             boundFields = '{0}{1},'.format(boundFields, key)
         # count = count + 1
     # print(count)
@@ -558,8 +562,8 @@ def sign(info):
             "fieldSQxq": data['fieldSQxq'],  # 校区代号
             "fieldSQxq_Name": data['fieldSQxq_Name'],  # 校区名字
             "fieldSQsjh": data['fieldSQsjh'],
-            "fieldSQyjsms": data['fieldSQyjsms'],
-            "fieldSQyjsms_Name": data['fieldSQyjsms_Name'],
+            "fieldSQfdyxm": data['fieldSQfdyxm'],
+            "fieldSQfdyxm_Name": data['fieldSQfdyxm_Name'],
             "fieldBKSpd": data['fieldBKSpd'],
             "fieldXNSY": data['fieldXNSY'],
             "fieldXNSY_Name": data['fieldXNSY_Name'],
@@ -747,6 +751,7 @@ def sign(info):
         raise MsgException(msg)
 
     response_json = json.loads(response.text)
+    # print("response14", response.text)
     if 'errno' in response_json and response_json['errno'] != 0:
         print_log(response_json['error'])
         desp = {'state': "失败", "msg": response_json['error']}
@@ -963,7 +968,7 @@ def auto_sign():
                         email_content.append(email_name + "打卡失败\n")
                         break
                     print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
-                        sys._getframe().f_lineno, e))
+                        sys._getframe().f_lineno, e, traceback.print_exc()))
                     time.sleep(5)
             print_log("10s后打下一个")
             time.sleep(10)
