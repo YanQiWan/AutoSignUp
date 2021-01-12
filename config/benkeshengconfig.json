@@ -1,7 +1,7 @@
 {
-  "username": "zhangzy0118",
+  "username": "XXX",
   "//": "username为吉林大学邮箱@前面的字符串",
-  "password": "ZZy1427587456",
+  "password": "XXX",
   "//": "password为吉林大学邮箱密码",
   "times": "2",
   "//": "times为脚本出现网络异常而循环运行的次数，每次网络异常会等待45秒后再次尝试",
