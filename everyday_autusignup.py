@@ -1,6 +1,7 @@
 import time
 from signup import auto_sign, print_log
 from enum import Enum
+import random
 
 """
 1. 6:00~12:00
@@ -37,7 +38,7 @@ def everyday_auto_signup():
                 print_log("研究生早打卡")
                 yjs_daka_success = auto_sign(Flag.yjs.value)
 
-        if 20 <= current_hour < 24 and 1 <= current_min < 59:
+        if 18 <= current_hour < 24 and 1 <= current_min < 59:
             while yjs_daka_success:
                 print_log("研究生晚打卡")
                 yjs_daka_success = not auto_sign(Flag.yjs.value)
@@ -47,12 +48,14 @@ def everyday_auto_signup():
                 print_log("本科生早打卡")
                 bks_daka_success = auto_sign(Flag.bks.value)
 
-        if 21 <= current_hour < 24 and 1 <= current_min < 59:
+        if 19 <= current_hour < 24 and 1 <= current_min < 59:
             while bks_daka_success:
                 print_log("本科生晚打卡")
                 bks_daka_success = not auto_sign(Flag.bks.value)
         print_log("本次打卡轮询结束" + str(bks_daka_success) + " " + str(yjs_daka_success))
-        time.sleep(1200)
+        ran = random.randrange(600, 1500)
+        print_log("间隔时间" + str(ran) + "s")
+        time.sleep(ran)
 
 
 if __name__ == "__main__":
