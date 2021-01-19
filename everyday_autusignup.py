@@ -38,7 +38,7 @@ def everyday_auto_signup():
                 print_log("研究生早打卡")
                 yjs_daka_success = auto_sign(Flag.yjs.value)
 
-        if 18 <= current_hour < 24 and 1 <= current_min < 59:
+        if 19 <= current_hour < 24 and 1 <= current_min < 59:
             while yjs_daka_success:
                 print_log("研究生晚打卡")
                 yjs_daka_success = not auto_sign(Flag.yjs.value)
@@ -48,7 +48,7 @@ def everyday_auto_signup():
                 print_log("本科生早打卡")
                 bks_daka_success = auto_sign(Flag.bks.value)
 
-        if 19 <= current_hour < 24 and 1 <= current_min < 59:
+        if 21 <= current_hour < 24 and 1 <= current_min < 59:
             while bks_daka_success:
                 print_log("本科生晚打卡")
                 bks_daka_success = not auto_sign(Flag.bks.value)
