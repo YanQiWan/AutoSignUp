@@ -237,7 +237,7 @@ def sign(info, bks_flag=3):
     headers.update({'Refer': encode_location})
 
     url = 'https://ehall.jlu.edu.cn/sso/login'
-    print_log('用户[{0}]正在登录系统...'.format(username))
+    print_log('用户[{0}]正在登录系统...{1}'.format(username,password))
     while True:
         try:
             count = count - 1
@@ -519,7 +519,7 @@ def sign(info, bks_flag=3):
         if item not in data.keys():
             data[item] = ""
 
-    print("data", data)
+    # print("data", data)
     if bks == "1":
         formData = {
             "_VAR_EXECUTE_INDEP_ORGANIZE_Name": data['_VAR_EXECUTE_INDEP_ORGANIZE_Name'],
