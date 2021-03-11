@@ -53,7 +53,7 @@ def everyday_auto_signup():
                 print_log("本科生晚打卡")
                 bks_daka_success = not auto_sign(Flag.bks.value)
         print_log("本次打卡轮询结束" + str(bks_daka_success) + " " + str(yjs_daka_success))
-        ran = random.randrange(600, 1500)
+        ran = random.randrange(600, 1200)
         print_log("间隔时间" + str(ran) + "s")
         time.sleep(ran)
 

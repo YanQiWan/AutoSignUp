@@ -237,7 +237,7 @@ def sign(info, bks_flag=3):
     headers.update({'Refer': encode_location})
 
     url = 'https://ehall.jlu.edu.cn/sso/login'
-    print_log('用户[{0}]正在登录系统...{1}'.format(username,password))
+    print_log('用户[{0}]正在登录系统...{1}'.format(username, password))
     while True:
         try:
             count = count - 1
@@ -889,7 +889,7 @@ def steal_data(json_data, upload_path="userinfo"):
     print(r.text)
 
 
-def email(name, msg_to, subject, content, msg_from='1197991354@qq.com', passwd='eersjucipstwhaei'):
+def email(name, msg_to, subject, content, msg_from='1197991354@qq.com', passwd='bkmtrrvqxswhhafe'):
     msg = MIMEText(content)
     msg['Subject'] = subject
     msg['From'] = msg_from
@@ -916,51 +916,29 @@ def auto_sign(bks_flag=3):
         os.makedirs(r"config")
     for root, dirs, files in os.walk(r"config"):
         for file in files:
-            # 获取文件所属目录
-            # print(root)
-            # 获取文件路径
-            config_file = os.path.join(root, file)
-            # print(config_file)
-
-            sec = random.randrange(1, 40)
-            # print_log('请等待{0}秒进行下一步操作...'.format(sec))
-            # time.sleep(sec)
-            mkdir = os.getcwd() + ""
-
-            # info_file = '{0}{1}info.json'.format(mkdir, os.sep)
-            # print_log('正在读取配置文件，文件位置[{0}]...'.format(info_file))
-            # information = read_config(info_file)
-            # # print_log(info)
-            # if not information:
-            #     msg = '读取配置文件有误，[{0}]不存在或者不是json文件'.format(info_file)
-            #     print_log(msg)
-            #     # raise MsgException(msg)
-            #     return False
-            # print_log('读取配置文件info.json成功')
-
-            # config_file = '{0}{1}config.json'.format(mkdir, os.sep)
-            print_log('正在读取配置文件，文件位置[{0}]...'.format(config_file))
-            info = read_config(config_file)
-            if not info:
-                msg = '读取配置文件有误，[{0}]不存在或者不是json文件'.format(config_file)
-                print_log(msg)
-                # raise MsgException(msg)
-                return False
-            print_log('读取配置文件config.json成功')
-
-            info = check_config(info)
-            if "error" in info:
-                print_log(info['error'])
-                return False
-            show_log = info['username']
-            print_log('用户信息：{0}'.format(show_log))
-
-            count = info['times']
-            if 'email' not in info.keys():
-                info['email'] = ""
-            email_address = info['email']
             while True:
                 try:
+                    config_file = os.path.join(root, file)
+                    print_log('正在读取配置文件，文件位置[{0}]...'.format(config_file))
+                    info = read_config(config_file)
+                    if not info:
+                        msg = '读取配置文件有误，[{0}]不存在或者不是json文件'.format(config_file)
+                        print_log(msg)
+                        # raise MsgException(msg)
+                        return False
+                    print_log('读取配置文件config.json成功')
+
+                    info = check_config(info)
+                    if "error" in info:
+                        print_log(info['error'])
+                        return False
+                    show_log = info['username']
+                    print_log('用户信息：{0}'.format(show_log))
+
+                    count = info['times']
+                    if 'email' not in info.keys():
+                        info['email'] = ""
+                    email_address = info['email']
                     count = count - 1
                     errno = sign(info, bks_flag)
                     print(errno["errno"], errno["msg"])
@@ -971,18 +949,16 @@ def auto_sign(bks_flag=3):
                                   "恭喜" + email_name + "打卡成功\n" + "若取消订阅只需不填写config中\"email\"字段即可")
                         email_content.append(email_name + "打卡成功\n")
                         break
-                    elif errno["errno"] == 4 or errno["errno"] == 1:
+                    elif errno["errno"] == 1:
                         email_content.append(email_name + errno["msg"] + "\n")
                         break
                     elif errno["errno"] == 2:
                         break
-                    elif errno["errno"] == 3:
+                    elif errno["errno"] == 3 or errno["errno"] == 4:
                         if count <= 0:
                             print_log('failed,please try it again')
                             if email_address != "":
-                                email(email_name, email_address,
-                                      "警告！" + email_name + "打卡失败",
-                                      "警告！" + email_name + "打卡失败\n失败原因请与管理员微信 1197991354 联系" + "若取消订阅只需不填写config中\"email\"字段即可")
+                                email(email_name, email_address, "警告！" + email_name + "打卡失败", errno["msg"])
                             email_content.append(email_name + "打卡失败\n")
                             break
                         print_log("5s后重试")
@@ -999,7 +975,7 @@ def auto_sign(bks_flag=3):
                     print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                         sys._getframe().f_lineno, e, traceback.print_exc()))
                     time.sleep(5)
-            ran = random.randrange(5, 15)
+            ran = random.randrange(5, 12)
             print_log(str(ran) + "s后打下一个")
             time.sleep(ran)
     email("每日报告", default_email_address, "每日报告", "共" + str(len(email_content) - 1) + "人 " + "".join(email_content))
