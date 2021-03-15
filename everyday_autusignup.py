@@ -2,14 +2,14 @@ import time
 from signup import auto_sign, print_log
 from enum import Enum
 import random
-
+import argparse
 """
 1. 6:00~12:00
 
 2. 20:00~24:00
 
 """
-
+parser = argparse.ArgumentParser()
 
 class Flag(Enum):
     bks = 1

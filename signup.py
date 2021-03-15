@@ -10,7 +10,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import sys
 import smtplib
 from email.mime.text import MIMEText
-
+import argparse
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 email_content = []
@@ -576,20 +576,10 @@ def sign(info, bks_flag=3):
             "fieldSQbj_Attr": "{\"_parent\":\"" + data['fieldSQnj'] + "\"}",
             "fieldSQxq": data['fieldSQxq'],  # 校区代号
             "fieldSQxq_Name": data['fieldSQxq_Name'],  # 校区名字
-            "fieldSQsjh": data['fieldSQsjh'],
-            "fieldSQfdyxm": data['fieldSQfdyxm'],
-            "fieldSQfdyxm_Name": data['fieldSQfdyxm_Name'],
-            "fieldBKSpd": data['fieldBKSpd'],
-            "fieldXNSY": data['fieldXNSY'],
-            "fieldXNSY_Name": data['fieldXNSY_Name'],
-            "fieldXWSY": data["fieldXWSY"],
-            "fieldXWSY_Name": data["fieldXWSY_Name"],
-            "fieldSYQT": data['fieldSYQT'],
             "fieldSQgyl": data['fieldSQgyl'],  # 公寓楼代号
             "fieldSQgyl_Name": data['fieldSQgyl_Name'],  # 公寓楼名字
             "fieldSQgyl_Attr": {"_parent": data['fieldSQxq']},  # #############
             "fieldSQqsh": data['fieldSQqsh'],  # 寝室号
-            "fieldDZMC": data['fieldDZMC'],
             "fieldHidden": data["fieldHidden"],  # 校外居住 校内居住不管
             "fieldSheng": data["fieldSheng"],  # 省代码
             "fieldSheng_Name": data["fieldSheng_Name"],  # 省名字
@@ -600,27 +590,12 @@ def sign(info, bks_flag=3):
             "fieldQu_Name": data["fieldQu_Name"],  # 区名字
             "fieldQu_Attr": "{\"_parent\":\"\"}",
             "fieldQums": data["fieldQums"],  # 详细居住地
-            "fieldZGFXDQ": "风险地区为：大连，沈阳等",
-            "fieldSFJTZGFXDQ": data["fieldSFJTZGFXDQ"],
-            "fieldSFJTZGFXDQsheng": data["fieldSFJTZGFXDQsheng"],
-            "fieldSFJTZGFXDQsheng_Name": data["fieldSFJTZGFXDQsheng_Name"],
-            "fieldSFJTZGFXDQshi": data['fieldSFJTZGFXDQshi'],
-            "fieldSFJTZGFXDQshi_Name": data['fieldSFJTZGFXDQshi_Name'],
-            "fieldSFJTZGFXDQshi_Attr": '',
-            "fieldSFJTZGFXDQqu": data['fieldSFJTZGFXDQqu'],
-            "fieldSFJTZGFXDQqu_Name": data['fieldSFJTZGFXDQqu_Name'],
-            "fieldSFJTZGFXDQqu_Attr": '',
-            "fieldSFJTZGFXDQxx": data['fieldSFJTZGFXDQxx'],
             "fieldZtw": data['fieldZtw'],  # 体温 1正常 2异常
             "fieldZtwyc": data['fieldZtwyc'],  # 体温异常
-            # "fieldZhongtw":
-            #     data['fieldZhongtw'],  # 中午体温
-            # "fieldZhongtwyc":
-            #     data['fieldZhongtwyc'],  # 中午体温异常
-            # "fieldWantw":
-            #     data['fieldWantw'],  # 晚上体温
-            # "fieldWantwyc":
-            #     data['fieldWantwyc'],  # 晚上体温异常
+            "fieldZhongtw":data['fieldZhongtw'],  # 中午体温
+            "fieldZhongtwyc":data['fieldZhongtwyc'],  # 中午体温异常
+            "fieldWantw":data['fieldWantw'],  # 晚上体温
+            "fieldWantwyc":data['fieldWantwyc'],  # 晚上体温异常
             "fieldHide": data['fieldHide'],
             "fieldXY3": data['fieldXY3'],
             "_VAR_ENTRY_NAME": app['name'],
@@ -679,10 +654,10 @@ def sign(info, bks_flag=3):
             "fieldSQxm_Name": data['fieldSQxm_Name'],
             "fieldXH": data['fieldXH'],
             "fieldZY": data['fieldZY'],  # 专业
-            "fieldSQnj": data['fieldSQnj'],  # 年级代号
-            "fieldSQnj_Name": data['fieldSQnj_Name'],  # 年级名字
             "fieldSQxy": data['fieldSQxy'],  # 学院代号
             "fieldSQxy_Name": data['fieldSQxy_Name'],  # 学院名字
+            "fieldSQnj": data['fieldSQnj'],  # 年级代号
+            "fieldSQnj_Name": data['fieldSQnj_Name'],  # 年级名字
             "fieldSQxq": data['fieldSQxq'],  # 校区代号
             "fieldSQxq_Name": data['fieldSQxq_Name'],  # 校区名字
             "fieldSQsjh": data['fieldSQsjh'],
@@ -982,5 +957,9 @@ def auto_sign(bks_flag=3):
     return True
 
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-bks_flag', default=3, help='bks_flag 1 bks;2,yjs;default 3')
+args = parser.parse_args()
 if __name__ == '__main__':
-    auto_sign()
+    auto_sign(args.bks_flag)
