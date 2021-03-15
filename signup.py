@@ -11,6 +11,7 @@ import sys
 import smtplib
 from email.mime.text import MIMEText
 import argparse
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 email_content = []
@@ -592,10 +593,10 @@ def sign(info, bks_flag=3):
             "fieldQums": data["fieldQums"],  # 详细居住地
             "fieldZtw": data['fieldZtw'],  # 体温 1正常 2异常
             "fieldZtwyc": data['fieldZtwyc'],  # 体温异常
-            "fieldZhongtw":data['fieldZhongtw'],  # 中午体温
-            "fieldZhongtwyc":data['fieldZhongtwyc'],  # 中午体温异常
-            "fieldWantw":data['fieldWantw'],  # 晚上体温
-            "fieldWantwyc":data['fieldWantwyc'],  # 晚上体温异常
+            "fieldZhongtw": data['fieldZhongtw'],  # 中午体温
+            "fieldZhongtwyc": data['fieldZhongtwyc'],  # 中午体温异常
+            "fieldWantw": data['fieldWantw'],  # 晚上体温
+            "fieldWantwyc": data['fieldWantwyc'],  # 晚上体温异常
             "fieldHide": data['fieldHide'],
             "fieldXY3": data['fieldXY3'],
             "_VAR_ENTRY_NAME": app['name'],
@@ -950,16 +951,16 @@ def auto_sign(bks_flag=3):
                     print_log('当前行: {0}\n 程序异常{1}，请5s后重试...'.format(
                         sys._getframe().f_lineno, e, traceback.print_exc()))
                     time.sleep(5)
-            ran = random.randrange(5, 12)
+
+            ran = random.randrange(5, 12) if errno["errno"] != 2 else 2
             print_log(str(ran) + "s后打下一个")
             time.sleep(ran)
     email("每日报告", default_email_address, "每日报告", "共" + str(len(email_content) - 1) + "人 " + "".join(email_content))
     return True
 
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('-bks_flag', default=3, help='bks_flag 1 bks;2,yjs;default 3')
 args = parser.parse_args()
 if __name__ == '__main__':
-    auto_sign(args.bks_flag)
+    auto_sign(int(args.bks_flag))
