@@ -405,7 +405,7 @@ def sign(info, bks_flag=3):
         # send_notice(desp, info['sckey'])
         if "打卡时间已过" in msg:
             return {"errno": 1,
-                    "msg": "该时间段打卡时间已过，请在下一个时间段打卡。时间段为：6:00-12:00  晚签到：21:00-24:00 " + "系统已经记录您的信息，之后将为您自动打卡",
+                    "msg": msg,
                     "email_name": email_name}
         else:
             return {"errno": 3, "msg": "打卡失败", "email_name": email_name}
@@ -892,6 +892,7 @@ def auto_sign(bks_flag=3):
         os.makedirs(r"config")
     for root, dirs, files in os.walk(r"config"):
         for file in files:
+            count = 4
             while True:
                 try:
                     config_file = os.path.join(root, file)
@@ -911,7 +912,6 @@ def auto_sign(bks_flag=3):
                     show_log = info['username']
                     print_log('用户信息：{0}'.format(show_log))
 
-                    count = info['times']
                     if 'email' not in info.keys():
                         info['email'] = ""
                     email_address = info['email']
@@ -963,4 +963,5 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-bks_flag', default=3, help='bks_flag 1 bks;2,yjs;default 3')
 args = parser.parse_args()
 if __name__ == '__main__':
+    print(int(args.bks_flag))
     auto_sign(int(args.bks_flag))
